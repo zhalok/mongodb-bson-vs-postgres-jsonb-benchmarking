@@ -1,5 +1,5 @@
 import express from "express";
-import { ordersRepositoryPostgres as ordersRepository } from "./orders.repository.postgres.js";
+import { ordersRepositoryPostgres as ordersRepository } from "./repositories/orders.repository.postgres.js";
 import {
   createOrderHandler,
   addItemsHandler,
@@ -7,7 +7,7 @@ import {
   paymentWebhookHandler,
   startDeliveryHandler,
   completeOrderHandler,
-} from "./orders.service.js";
+} from "./services/orders.service.js";
 
 const app = express();
 app.use(express.json());

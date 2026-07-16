@@ -1,4 +1,4 @@
-import { pool } from "./db.js";
+import { pool } from "../db-clients/postgres.js";
 
 export async function createOrder({
   order_id,

@@ -1,4 +1,4 @@
-import { db } from "./mongo.js";
+import { db } from "../db-clients/mongo.js";
 
 const orders = db.collection("orders");
 
