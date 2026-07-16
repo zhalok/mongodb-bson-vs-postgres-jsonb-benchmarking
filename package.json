@@ -6,7 +6,9 @@
   "scripts": {
     "insert": "node insert_huge_json.js",
     "insert:customers": "node insert_customers.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "start:postgres": "DB=postgres node server.js",
+    "start:mongo": "DB=mongo node server.js"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",

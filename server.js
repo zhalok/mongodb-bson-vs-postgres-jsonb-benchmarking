@@ -1,31 +1,12 @@
-import express from "express";
-import { ordersRepositoryPostgres as ordersRepository } from "./repositories/orders.repository.postgres.js";
-import {
-  createOrderHandler,
-  addItemsHandler,
-  makePaymentHandler,
-  paymentWebhookHandler,
-  startDeliveryHandler,
-  completeOrderHandler,
-} from "./services/orders.service.js";
+import { createPostgresApp, createMongoApp } from "./utils/bootstrap.js";
 
-const app = express();
-app.use(express.json());
+const appFactories = {
+  postgres: () => createPostgresApp(),
+  mongo: () => createMongoApp(),
+};
 
-app.post("/orders", (req, res) => createOrderHandler(req, res, ordersRepository));
-app.post("/orders/:orderId/add-items", (req, res) => addItemsHandler(req, res, ordersRepository));
-app.post("/orders/:orderId/make-payment", (req, res) =>
-  makePaymentHandler(req, res, ordersRepository)
-);
-app.post("/orders/:orderId/payment-webhook", (req, res) =>
-  paymentWebhookHandler(req, res, ordersRepository)
-);
-app.post("/orders/:orderId/start-delivery", (req, res) =>
-  startDeliveryHandler(req, res, ordersRepository)
-);
-app.post("/orders/:orderId/complete-order", (req, res) =>
-  completeOrderHandler(req, res, ordersRepository)
-);
+const DB = process.env.DB || "postgres";
+const app = appFactories[DB]();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
