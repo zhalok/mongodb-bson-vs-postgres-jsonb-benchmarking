@@ -95,22 +95,58 @@ services:
     depends_on:
       - server-mongo
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
-    container_name: cadvisor
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor:v0.49.1
+  #   container_name: cadvisor
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:ro
+  #     - /sys:/sys:ro
+  #     - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #     - /dev/disk/:/dev/disk:ro
+  #   devices:
+  #     - /dev/kmsg
+  #   privileged: true
+
+  cgroup-exporter:
+    build: ./monitoring/cgroup-exporter
+    container_name: cgroup-exporter
     restart: always
-    ports:
-      - 8080:8080
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    devices:
-      - /dev/kmsg
     privileged: true
+    volumes:
+      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 9100:9100
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: always
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - 9090:9090
+    depends_on:
+      - cgroup-exporter
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
 
   # pgadmin:
   #   image: dpage/pgadmin4
@@ -121,3 +157,7 @@ services:
   #     PGADMIN_DEFAULT_PASSWORD: admin
   #   volumes:
   #     - ./pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  prometheus-data:
+  grafana-data:
