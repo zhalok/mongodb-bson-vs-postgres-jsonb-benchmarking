@@ -56,7 +56,7 @@ export async function transitionStatus(orderId, expectedStatus, newStatus, event
   return rows[0] ?? null;
 }
 
-export const ordersRepository = {
+export const ordersRepositoryPostgres = {
   createOrder,
   getOrder,
   addLineItems,

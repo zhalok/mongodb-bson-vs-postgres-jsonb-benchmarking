@@ -1,5 +1,5 @@
 import express from "express";
-import { ordersRepository } from "./orders.repository.js";
+import { ordersRepositoryPostgres as ordersRepository } from "./orders.repository.postgres.js";
 import {
   createOrderHandler,
   addItemsHandler,
