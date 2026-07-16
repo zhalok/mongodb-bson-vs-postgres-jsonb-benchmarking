@@ -2,6 +2,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: postgres
+    restart: always
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:
@@ -9,6 +10,11 @@ services:
     volumes:
       - ./init-db:/docker-entrypoint-initdb.d
       - ./postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     # cap_add:
     #   - SYS_PTRACE
     # security_opt:
@@ -17,6 +23,7 @@ services:
   mongodb:
     image: mongo:7
     container_name: mongodb
+    restart: always
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongo
       - MONGO_INITDB_ROOT_PASSWORD=mongo
@@ -24,10 +31,16 @@ services:
       - 27017:27017
     volumes:
       - ./mongo-data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval 'db.adminCommand(\"ping\")' -u mongo -p mongo --authenticationDatabase admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   server-postgres:
     build: .
     container_name: server-postgres
+    restart: always
     environment:
       - MONGO_URI=mongodb://mongo:mongo@mongodb:27017
       - MONGO_DB=jsonb_experiments
@@ -41,11 +54,13 @@ services:
     ports:
       - 3001:3001
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   server-mongo:
     build: .
     container_name: server-mongo
+    restart: always
     environment:
       - DB=mongo
       - PORT=3002
@@ -59,11 +74,13 @@ services:
     ports:
       - 3002:3002
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
 
   client-postgres:
     build: ./client
     container_name: client-postgres
+    restart: always
     environment:
       - CLIENT_BASE_URL=http://server-postgres:3001
     depends_on:
@@ -72,6 +89,7 @@ services:
   client-mongo:
     build: ./client
     container_name: client-mongo
+    restart: always
     environment:
       - CLIENT_BASE_URL=http://server-mongo:3002
     depends_on:
@@ -80,6 +98,7 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.49.1
     container_name: cadvisor
+    restart: always
     ports:
       - 8080:8080
     volumes:
