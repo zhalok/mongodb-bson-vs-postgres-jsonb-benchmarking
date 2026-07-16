@@ -7,9 +7,6 @@ import {
   startDeliveryHandler,
   completeOrderHandler,
 } from "../services/orders.service.js";
-import { ordersRepositoryMongodb } from "../repositories/orders.repository.mongodb.js";
-import { ordersRepositoryPostgres } from "../repositories/orders.repository.postgres.js";
-
 export function createApp(ordersRepository) {
   const app = express();
   app.use(express.json());
@@ -32,10 +29,12 @@ export function createApp(ordersRepository) {
   return app;
 }
 
-export function createMongoApp() {
+export async function createMongoApp() {
+  const { ordersRepositoryMongodb } = await import("../repositories/orders.repository.mongodb.js");
   return createApp(ordersRepositoryMongodb);
 }
 
-export function createPostgresApp() {
+export async function createPostgresApp() {
+  const { ordersRepositoryPostgres } = await import("../repositories/orders.repository.postgres.js");
   return createApp(ordersRepositoryPostgres);
 }

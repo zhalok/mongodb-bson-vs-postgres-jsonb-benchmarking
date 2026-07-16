@@ -25,6 +25,58 @@ services:
     volumes:
       - ./mongo-data:/data/db
 
+  server-postgres:
+    build: .
+    container_name: server-postgres
+    environment:
+      - MONGO_URI=mongodb://mongo:mongo@mongodb:27017
+      - MONGO_DB=jsonb_experiments
+      - DB=postgres
+      - PORT=3001
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=postgres
+    ports:
+      - 3001:3001
+    depends_on:
+      - postgres
+
+  server-mongo:
+    build: .
+    container_name: server-mongo
+    environment:
+      - DB=mongo
+      - PORT=3002
+      - MONGO_URI=mongodb://mongo:mongo@mongodb:27017
+      - MONGO_DB=jsonb_experiments
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=postgres
+    ports:
+      - 3002:3002
+    depends_on:
+      - mongodb
+
+  client-postgres:
+    build: ./client
+    container_name: client-postgres
+    environment:
+      - CLIENT_BASE_URL=http://server-postgres:3001
+    depends_on:
+      - server-postgres
+
+  client-mongo:
+    build: ./client
+    container_name: client-mongo
+    environment:
+      - CLIENT_BASE_URL=http://server-mongo:3002
+    depends_on:
+      - server-mongo
+
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.49.1
     container_name: cadvisor
