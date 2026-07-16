@@ -3,7 +3,7 @@
   "uid": "cgroup-metrics",
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 3,
   "refresh": "5s",
   "time": { "from": "now-15m", "to": "now" },
   "panels": [
@@ -14,7 +14,7 @@
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
       "targets": [
         {
-          "expr": "rate(cgroup_cpu_usage_seconds_total[1m])",
+          "expr": "sum by (container_name) (rate(cgroup_cpu_usage_seconds_total{container_name!~\"grafana|prometheus\"}[1m]))",
           "legendFormat": "{{container_name}}"
         }
       ]
@@ -27,7 +27,7 @@
       "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] },
       "targets": [
         {
-          "expr": "cgroup_memory_usage_bytes",
+          "expr": "max by (container_name) (cgroup_memory_usage_bytes)",
           "legendFormat": "{{container_name}}"
         }
       ]
@@ -40,7 +40,7 @@
       "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] },
       "targets": [
         {
-          "expr": "rate(cgroup_io_read_bytes_total[1m])",
+          "expr": "sum by (container_name) (rate(cgroup_io_read_bytes_total[1m]))",
           "legendFormat": "{{container_name}}"
         }
       ]
@@ -53,7 +53,7 @@
       "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] },
       "targets": [
         {
-          "expr": "rate(cgroup_io_write_bytes_total[1m])",
+          "expr": "sum by (container_name) (rate(cgroup_io_write_bytes_total[1m]))",
           "legendFormat": "{{container_name}}"
         }
       ]
@@ -65,7 +65,7 @@
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
       "targets": [
         {
-          "expr": "cgroup_pids",
+          "expr": "max by (container_name) (cgroup_pids)",
           "legendFormat": "{{container_name}}"
         }
       ]
