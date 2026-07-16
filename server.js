@@ -4,23 +4,6 @@ import { pool } from "./db.js";
 const app = express();
 app.use(express.json());
 
-const EVENT_GAP_MS = 5000;
-
-const SCHEDULED_EVENTS = [
-  { event: "item_added", payload: { product_id: "prod_4412" } },
-  { event: "checkout_started", payload: { step: 1, abandoned_previous: false } },
-  { event: "payment_submitted", payload: { gateway: "Stripe", method: "ApplePay" } },
-];
-
-async function appendEvent(orderId, event) {
-  await pool.query(
-    `UPDATE orders
-     SET event_timeline = event_timeline || $2::jsonb
-     WHERE order_id = $1`,
-    [orderId, JSON.stringify([event])]
-  );
-}
-
 async function getOrder(orderId) {
   const { rows } = await pool.query(
     `SELECT order_id, status FROM orders WHERE order_id = $1`,
@@ -38,19 +21,6 @@ async function transitionStatus(orderId, expectedStatus, newStatus, event) {
     [orderId, newStatus, JSON.stringify([event]), expectedStatus]
   );
   return rows[0] ?? null;
-}
-
-function scheduleEvents(orderId) {
-  SCHEDULED_EVENTS.forEach((template, index) => {
-    setTimeout(async () => {
-      const event = { ...template, timestamp: new Date().toISOString() };
-      try {
-        await appendEvent(orderId, event);
-      } catch (err) {
-        console.error(`Failed to append event "${event.event}" for order ${orderId}`, err);
-      }
-    }, EVENT_GAP_MS * (index + 1));
-  });
 }
 
 app.post("/orders", async (req, res) => {
@@ -81,8 +51,6 @@ app.post("/orders", async (req, res) => {
         JSON.stringify([cartCreatedEvent]),
       ]
     );
-
-    scheduleEvents(order_id);
 
     res.status(201).json({ order_id, event_timeline: [cartCreatedEvent] });
   } catch (err) {
