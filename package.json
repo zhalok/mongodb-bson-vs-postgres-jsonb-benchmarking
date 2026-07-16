@@ -1,0 +1,16 @@
+{
+  "name": "jsonb-experiments",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "insert": "node insert_huge_json.js",
+    "insert:customers": "node insert_customers.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.4.1",
+    "express": "^5.2.1",
+    "pg": "^8.11.5"
+  }
+}
