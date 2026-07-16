@@ -6,7 +6,7 @@ const appFactories = {
 };
 
 const DB = process.env.DB || "postgres";
-const app = appFactories[DB]();
+const app = await appFactories[DB]();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
