@@ -24,13 +24,13 @@ services:
     image: mongo:7
     container_name: mongodb
     restart: always
-    command:
-      - "mongod"
-      - "--wiredTigerCollectionBlockCompressor=none"
-      - "--wiredTigerJournalCompressor=none"
-      - "--wiredTigerIndexPrefixCompression=false"
-      - "--setParameter"
-      - "diagnosticDataCollectionEnabled=false"
+    # command:
+    #   - "mongod"
+    #   - "--wiredTigerCollectionBlockCompressor=none"
+    #   - "--wiredTigerJournalCompressor=none"
+    #   - "--wiredTigerIndexPrefixCompression=false"
+    #   - "--setParameter"
+    #   - "diagnosticDataCollectionEnabled=false"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongo
       - MONGO_INITDB_ROOT_PASSWORD=mongo
