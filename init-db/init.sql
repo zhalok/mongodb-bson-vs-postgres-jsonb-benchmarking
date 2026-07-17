@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS orders (
     event_timeline JSONB
 );
 
-CREATE INDEX IF NOT EXISTS idx_orders_timestamp_desc ON orders ("timestamp" DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_timestamp_desc ON orders ("timestamp" ASC);
