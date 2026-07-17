@@ -76,8 +76,8 @@ export async function getOrders(cursor) {
          )
        ) AS financials
      FROM orders
-     WHERE $1::timestamptz IS NULL OR "timestamp" < $1
-     ORDER BY "timestamp" DESC
+     WHERE $1::timestamptz IS NULL OR "timestamp" > $1
+     ORDER BY "timestamp" ASC
      LIMIT ${PAGE_SIZE}`,
     [cursor ?? null]
   );

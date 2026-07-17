@@ -1,7 +1,7 @@
 import { db } from "../db-clients/mongo.js";
 
 const orders = db.collection("orders");
-await orders.createIndex({ timestamp: -1 });
+await orders.createIndex({ timestamp: 1 });
 
 export async function createOrder({
   order_id,
@@ -66,12 +66,12 @@ export async function transitionStatus(orderId, expectedStatus, newStatus, event
 const PAGE_SIZE = 1000;
 
 export async function getOrders(cursor) {
-  const match = cursor ? { timestamp: { $lt: new Date(cursor) } } : {};
+  const match = cursor ? { timestamp: { $gt: new Date(cursor) } } : {};
 
   const rows = await orders
     .aggregate([
       { $match: match },
-      { $sort: { timestamp: -1 } },
+      { $sort: { timestamp: 1 } },
       { $limit: PAGE_SIZE },
       {
         $project: {
