@@ -222,6 +222,9 @@ func worker(workerID int, wg *sync.WaitGroup) {
 }
 
 func main() {
+	log.Println("waiting 5s for the backend to be ready...")
+	time.Sleep(5 * time.Second)
+
 	var wg sync.WaitGroup
 	wg.Add(numWorkers)
 	for w := 0; w < numWorkers; w++ {
