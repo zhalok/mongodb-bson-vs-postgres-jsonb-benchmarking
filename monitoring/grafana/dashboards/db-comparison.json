@@ -5,8 +5,8 @@
     "name": "db-comparison",
     "namespace": "default",
     "uid": "b116f1a4-dcda-4c32-b5ac-951322494f7c",
-    "resourceVersion": "1784283699091994",
-    "generation": 1,
+    "resourceVersion": "1784291175621990",
+    "generation": 4,
     "creationTimestamp": "2026-07-17T10:21:39Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "1903138472693760"
@@ -15,9 +15,11 @@
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "cgroup-metrics",
-      "grafana.app/sourceChecksum": "e2c56b98f84220dfd335bfe749357ba0",
+      "grafana.app/sourceChecksum": "d40d68b00d899bc16af6ce0a1a268a32",
       "grafana.app/sourcePath": "/etc/grafana/dashboards/db-comparison.json",
-      "grafana.app/sourceTimestamp": "1784283399000",
+      "grafana.app/sourceTimestamp": "1784291170000",
+      "grafana.app/updatedBy": "access-policy:service",
+      "grafana.app/updatedTimestamp": "2026-07-17T12:26:15Z",
       "grafana.app/folder": ""
     }
   },
@@ -181,7 +183,7 @@
                       "spec": {
                         "direction": "backward",
                         "editorMode": "code",
-                        "expr": "quantile_over_time(0.50, {container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\S+) (?P<url>\\S+) (?P<status>\\d+) (?P<duration>\\d+)ms` | unwrap duration [$__auto]) by (container)",
+                        "expr": "quantile_over_time(0.50, {container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\S+) (?P<url>\\S+) (?P<status>\\d+) (?P<duration>\\d+)ms` | unwrap duration [5s]) by (container)",
                         "queryType": "range"
                       },
                       "version": "v0"
@@ -762,7 +764,10 @@
                       "group": "loki",
                       "kind": "DataQuery",
                       "spec": {
-                        "expr": "quantile_over_time(0.95, {container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\S+) (?P<url>\\S+) (?P<status>\\d+) (?P<duration>\\d+)ms` | unwrap duration [$__auto]) by (container)"
+                        "direction": "backward",
+                        "editorMode": "code",
+                        "expr": "quantile_over_time(0.95, {container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\S+) (?P<url>\\S+) (?P<status>\\d+) (?P<duration>\\d+)ms` | unwrap duration [5s]) by (container)",
+                        "queryType": "range"
                       },
                       "version": "v0"
                     },
@@ -879,7 +884,10 @@
                       "group": "loki",
                       "kind": "DataQuery",
                       "spec": {
-                        "expr": "avg_over_time({container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\S+) (?P<url>\\S+) (?P<status>\\d+) (?P<duration>\\d+)ms` | unwrap duration [$__auto]) by (container)"
+                        "direction": "backward",
+                        "editorMode": "code",
+                        "expr": "avg_over_time({container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\S+) (?P<url>\\S+) (?P<status>\\d+) (?P<duration>\\d+)ms` | unwrap duration [5s]) by (container)",
+                        "queryType": "range"
                       },
                       "version": "v0"
                     },
@@ -952,32 +960,7 @@
                     ]
                   }
                 },
-                "overrides": [
-                  {
-                    "__systemRef": "hideSeriesFrom",
-                    "matcher": {
-                      "id": "byNames",
-                      "options": {
-                        "mode": "exclude",
-                        "names": [
-                          "{container=\"server-postgres\"}"
-                        ],
-                        "prefix": "All except:",
-                        "readOnly": true
-                      }
-                    },
-                    "properties": [
-                      {
-                        "id": "custom.hideFrom",
-                        "value": {
-                          "legend": false,
-                          "tooltip": true,
-                          "viz": true
-                        }
-                      }
-                    ]
-                  }
-                ]
+                "overrides": []
               },
               "options": {
                 "annotations": {
@@ -1138,7 +1121,10 @@
                       "group": "loki",
                       "kind": "DataQuery",
                       "spec": {
-                        "expr": "max_over_time({container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\S+) (?P<url>\\S+) (?P<status>\\d+) (?P<duration>\\d+)ms` | unwrap duration [$__auto]) by (container)"
+                        "direction": "backward",
+                        "editorMode": "code",
+                        "expr": "max_over_time({container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\S+) (?P<url>\\S+) (?P<status>\\d+) (?P<duration>\\d+)ms` | unwrap duration [5s]) by (container)",
+                        "queryType": "range"
                       },
                       "version": "v0"
                     },
