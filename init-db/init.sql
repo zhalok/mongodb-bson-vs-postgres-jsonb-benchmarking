@@ -8,3 +8,5 @@ CREATE TABLE IF NOT EXISTS orders (
     polymorphic_metadata JSONB,
     event_timeline JSONB
 );
+
+CREATE INDEX IF NOT EXISTS idx_orders_timestamp_desc ON orders ("timestamp" DESC);

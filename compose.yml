@@ -102,6 +102,24 @@ services:
     depends_on:
       - server-mongo
 
+  reader-postgres:
+    build: ./client-reader
+    container_name: reader-postgres
+    restart: always
+    environment:
+      - CLIENT_BASE_URL=http://server-postgres:3001
+    depends_on:
+      - server-postgres
+
+  reader-mongo:
+    build: ./client-reader
+    container_name: reader-mongo
+    restart: always
+    environment:
+      - CLIENT_BASE_URL=http://server-mongo:3002
+    depends_on:
+      - server-mongo
+
   # cadvisor:
   #   image: gcr.io/cadvisor/cadvisor:v0.49.1
   #   container_name: cadvisor

@@ -29,6 +29,16 @@ export async function createOrderHandler(req, res, repository) {
   }
 }
 
+export async function getOrdersHandler(req, res, repository) {
+  try {
+    const orders = await repository.getOrders();
+    res.status(200).json(orders);
+  } catch (err) {
+    console.error("Failed to fetch orders", err);
+    res.status(500).json({ error: "Failed to fetch orders" });
+  }
+}
+
 export async function addItemsHandler(req, res, repository) {
   const { orderId } = req.params;
   const { line_items } = req.body;

@@ -1,6 +1,7 @@
 import { db } from "../db-clients/mongo.js";
 
 const orders = db.collection("orders");
+await orders.createIndex({ timestamp: -1 });
 
 export async function createOrder({
   order_id,
@@ -62,9 +63,32 @@ export async function transitionStatus(orderId, expectedStatus, newStatus, event
   return result ?? null;
 }
 
+export async function getOrders() {
+  return orders
+    .aggregate([
+      { $sort: { timestamp: -1 } },
+      { $limit: 100 },
+      {
+        $project: {
+          _id: 0,
+          order_id: 1,
+          timestamp: 1,
+          customer: {
+            id: "$customer.id",
+            tier: "$customer.tier",
+            geo_location: { country: "$customer.session_context.geo_location.country" },
+          },
+          financials: { amount: { final_total: "$financials.amounts.final_total" } },
+        },
+      },
+    ])
+    .toArray();
+}
+
 export const ordersRepositoryMongodb = {
   createOrder,
   getOrder,
+  getOrders,
   addLineItems,
   transitionStatus,
 };

@@ -56,9 +56,34 @@ export async function transitionStatus(orderId, expectedStatus, newStatus, event
   return rows[0] ?? null;
 }
 
+export async function getOrders() {
+  const { rows } = await pool.query(
+    `SELECT
+       order_id,
+       "timestamp",
+       jsonb_build_object(
+         'id', customer->>'id',
+         'tier', customer->>'tier',
+         'geo_location', jsonb_build_object(
+           'country', customer#>>'{session_context,geo_location,country}'
+         )
+       ) AS customer,
+       jsonb_build_object(
+         'amount', jsonb_build_object(
+           'final_total', (financials#>>'{amounts,final_total}')::numeric
+         )
+       ) AS financials
+     FROM orders
+     ORDER BY "timestamp" DESC
+     LIMIT 100`
+  );
+  return rows;
+}
+
 export const ordersRepositoryPostgres = {
   createOrder,
   getOrder,
+  getOrders,
   addLineItems,
   transitionStatus,
 };

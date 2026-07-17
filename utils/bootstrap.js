@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createOrderHandler,
+  getOrdersHandler,
   addItemsHandler,
   makePaymentHandler,
   paymentWebhookHandler,
@@ -24,6 +25,7 @@ export function createApp(ordersRepository) {
   app.use(express.json());
 
   app.post("/orders", (req, res) => createOrderHandler(req, res, ordersRepository));
+  app.get("/orders", (req, res) => getOrdersHandler(req, res, ordersRepository));
   app.post("/orders/:orderId/add-items", (req, res) => addItemsHandler(req, res, ordersRepository));
   app.post("/orders/:orderId/make-payment", (req, res) =>
     makePaymentHandler(req, res, ordersRepository)
