@@ -8,4 +8,7 @@ export const pool = new Pool({
   user: process.env.PGUSER || "postgres",
   password: process.env.PGPASSWORD || "postgres",
   database: process.env.PGDATABASE || "postgres",
+  max: 50,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
 });

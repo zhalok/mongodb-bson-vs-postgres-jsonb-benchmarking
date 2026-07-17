@@ -16,7 +16,7 @@ var baseURL = envOr("CLIENT_BASE_URL", "http://localhost:3001")
 const (
 	numWorkers  = 100
 	pollGap     = 2 * time.Second
-	httpTimeout = 10 * time.Second
+	httpTimeout = 20 * time.Second
 )
 
 func envOr(key, fallback string) string {
