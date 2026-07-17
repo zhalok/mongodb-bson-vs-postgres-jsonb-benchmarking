@@ -29,6 +29,8 @@ services:
       - "--wiredTigerCollectionBlockCompressor=none"
       - "--wiredTigerJournalCompressor=none"
       - "--wiredTigerIndexPrefixCompression=false"
+      - "--setParameter"
+      - "diagnosticDataCollectionEnabled=false"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongo
       - MONGO_INITDB_ROOT_PASSWORD=mongo
