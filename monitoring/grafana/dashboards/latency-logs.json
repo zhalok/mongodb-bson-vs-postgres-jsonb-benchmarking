@@ -1,0 +1,76 @@
+{
+  "title": "Request Latency (from logs)",
+  "uid": "latency-logs",
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": { "from": "now-15m", "to": "now" },
+  "panels": [
+    {
+      "id": 1,
+      "title": "p95 Latency (ms)",
+      "type": "timeseries",
+      "datasource": { "type": "loki", "uid": "Loki" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "Loki" },
+          "expr": "quantile_over_time(0.95, {container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\\\S+) (?P<url>\\\\S+) (?P<status>\\\\d+) (?P<duration>\\\\d+)ms` | unwrap duration [$__auto]) by (container)"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Average Latency (ms)",
+      "type": "timeseries",
+      "datasource": { "type": "loki", "uid": "Loki" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "Loki" },
+          "expr": "avg_over_time({container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\\\S+) (?P<url>\\\\S+) (?P<status>\\\\d+) (?P<duration>\\\\d+)ms` | unwrap duration [$__auto]) by (container)"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Request Rate by Status",
+      "type": "timeseries",
+      "datasource": { "type": "loki", "uid": "Loki" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "Loki" },
+          "expr": "sum by (container, status) (rate({container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\\\S+) (?P<url>\\\\S+) (?P<status>\\\\d+) (?P<duration>\\\\d+)ms` [$__auto]))"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Max Latency (ms)",
+      "type": "timeseries",
+      "datasource": { "type": "loki", "uid": "Loki" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "Loki" },
+          "expr": "max_over_time({container=~\"server-postgres|server-mongo\"} | regexp `(?P<method>\\\\S+) (?P<url>\\\\S+) (?P<status>\\\\d+) (?P<duration>\\\\d+)ms` | unwrap duration [$__auto]) by (container)"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Raw Logs",
+      "type": "logs",
+      "datasource": { "type": "loki", "uid": "Loki" },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "Loki" },
+          "expr": "{container=~\"server-postgres|server-mongo\"}"
+        }
+      ]
+    }
+  ]
+}
