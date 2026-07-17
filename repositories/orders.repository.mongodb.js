@@ -63,11 +63,16 @@ export async function transitionStatus(orderId, expectedStatus, newStatus, event
   return result ?? null;
 }
 
-export async function getOrders() {
-  return orders
+const PAGE_SIZE = 1000;
+
+export async function getOrders(cursor) {
+  const match = cursor ? { timestamp: { $lt: new Date(cursor) } } : {};
+
+  const rows = await orders
     .aggregate([
+      { $match: match },
       { $sort: { timestamp: -1 } },
-      { $limit: 100 },
+      { $limit: PAGE_SIZE },
       {
         $project: {
           _id: 0,
@@ -83,6 +88,9 @@ export async function getOrders() {
       },
     ])
     .toArray();
+
+  const next_cursor = rows.length === PAGE_SIZE ? rows[rows.length - 1].timestamp : null;
+  return { orders: rows, next_cursor };
 }
 
 export const ordersRepositoryMongodb = {

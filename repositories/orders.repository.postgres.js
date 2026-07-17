@@ -56,7 +56,9 @@ export async function transitionStatus(orderId, expectedStatus, newStatus, event
   return rows[0] ?? null;
 }
 
-export async function getOrders() {
+const PAGE_SIZE = 1000;
+
+export async function getOrders(cursor) {
   const { rows } = await pool.query(
     `SELECT
        order_id,
@@ -74,10 +76,14 @@ export async function getOrders() {
          )
        ) AS financials
      FROM orders
+     WHERE $1::timestamptz IS NULL OR "timestamp" < $1
      ORDER BY "timestamp" DESC
-     LIMIT 100`
+     LIMIT ${PAGE_SIZE}`,
+    [cursor ?? null]
   );
-  return rows;
+
+  const next_cursor = rows.length === PAGE_SIZE ? rows[rows.length - 1].timestamp : null;
+  return { orders: rows, next_cursor };
 }
 
 export const ordersRepositoryPostgres = {

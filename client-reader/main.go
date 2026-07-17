@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"sync"
 	"time"
@@ -26,21 +28,56 @@ func envOr(key, fallback string) string {
 
 var httpClient = &http.Client{Timeout: httpTimeout}
 
-func getOrders() error {
-	resp, err := httpClient.Get(baseURL + "/orders")
+type ordersPage struct {
+	NextCursor *string `json:"next_cursor"`
+}
+
+// getOrdersPage fetches one page (1000 rows, index-based keyset pagination on
+// timestamp) and returns the cursor for the next page, or "" once exhausted.
+func getOrdersPage(cursor string) (string, error) {
+	reqURL := baseURL + "/orders"
+	if cursor != "" {
+		reqURL += "?cursor=" + url.QueryEscape(cursor)
+	}
+
+	resp, err := httpClient.Get(reqURL)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer resp.Body.Close()
 
-	if _, err := io.Copy(io.Discard, resp.Body); err != nil {
-		return err
+	if resp.StatusCode >= 300 {
+		io.Copy(io.Discard, resp.Body)
+		return "", &httpStatusError{resp.StatusCode}
 	}
 
-	if resp.StatusCode >= 300 {
-		return &httpStatusError{resp.StatusCode}
+	var page ordersPage
+	if err := json.NewDecoder(resp.Body).Decode(&page); err != nil {
+		return "", err
 	}
-	return nil
+
+	if page.NextCursor == nil {
+		return "", nil
+	}
+	return *page.NextCursor, nil
+}
+
+// scanAllOrders pages through the entire table via keyset pagination so each
+// read call touches every row instead of repeatedly hitting the same cached page.
+func scanAllOrders() (int, error) {
+	cursor := ""
+	pages := 0
+	for {
+		next, err := getOrdersPage(cursor)
+		if err != nil {
+			return pages, err
+		}
+		pages++
+		if next == "" {
+			return pages, nil
+		}
+		cursor = next
+	}
 }
 
 type httpStatusError struct{ code int }
@@ -51,10 +88,11 @@ func (e *httpStatusError) Error() string {
 
 func worker(workerID int) {
 	for {
-		if err := getOrders(); err != nil {
-			log.Printf("[reader-%d] GET /orders failed: %v\n", workerID, err)
+		pages, err := scanAllOrders()
+		if err != nil {
+			log.Printf("[reader-%d] full scan failed after %d page(s): %v\n", workerID, pages, err)
 		} else {
-			log.Printf("[reader-%d] GET /orders ok\n", workerID)
+			log.Printf("[reader-%d] full scan ok, %d page(s)\n", workerID, pages)
 		}
 		time.Sleep(pollGap)
 	}

@@ -30,9 +30,11 @@ export async function createOrderHandler(req, res, repository) {
 }
 
 export async function getOrdersHandler(req, res, repository) {
+  const { cursor } = req.query;
+
   try {
-    const orders = await repository.getOrders();
-    res.status(200).json(orders);
+    const { orders, next_cursor } = await repository.getOrders(cursor ?? null);
+    res.status(200).json({ orders, next_cursor });
   } catch (err) {
     console.error("Failed to fetch orders", err);
     res.status(500).json({ error: "Failed to fetch orders" });
