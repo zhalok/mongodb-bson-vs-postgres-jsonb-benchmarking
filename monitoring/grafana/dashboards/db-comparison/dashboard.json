@@ -245,6 +245,19 @@
               "x": 0,
               "y": 80
             }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "postgres-vs-mongo-disk-read-rate-s"
+              },
+              "height": 8,
+              "width": 24,
+              "x": 0,
+              "y": 88
+            }
           }
         ]
       }
