@@ -232,6 +232,19 @@
               "x": 0,
               "y": 72
             }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "postgres-vs-mongo-cache-hit-rate-s"
+              },
+              "height": 8,
+              "width": 24,
+              "x": 0,
+              "y": 80
+            }
           }
         ]
       }
