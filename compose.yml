@@ -197,6 +197,18 @@ services:
       mongodb:
         condition: service_healthy
 
+  mongo-hit-read-stats-exporter:
+    build: ./monitoring/mongo-hit-read-stats-exporter
+    container_name: mongo-hit-read-stats-exporter
+    restart: always
+    environment:
+      - MONGO_URI=mongodb://mongo:mongo@mongodb:27017
+    ports:
+      - 9104:9104
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -211,6 +223,7 @@ services:
       - postgres-hit-read-stats-exporter
       - pg-table-size-exporter
       - mongo-collection-size-exporter
+      - mongo-hit-read-stats-exporter
 
   loki:
     image: grafana/loki:latest

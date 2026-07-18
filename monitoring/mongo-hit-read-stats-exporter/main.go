@@ -1,0 +1,118 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"os"
+	"time"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+)
+
+type cacheStats struct {
+	Requested int64
+	ReadInto  int64
+}
+
+var client *mongo.Client
+
+func connect() *mongo.Client {
+	uri := envOr("MONGO_URI", "mongodb://mongo:mongo@mongodb:27017")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	c, err := mongo.Connect(options.Client().ApplyURI(uri))
+	if err != nil {
+		panic(err)
+	}
+	if err := c.Ping(ctx, nil); err != nil {
+		panic(err)
+	}
+
+	return c
+}
+
+func envOr(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
+}
+
+func collectCacheStats(ctx context.Context) (cacheStats, error) {
+	var s cacheStats
+
+	var result bson.M
+	err := client.Database("admin").RunCommand(ctx, bson.D{
+		{Key: "serverStatus", Value: 1},
+	}).Decode(&result)
+	if err != nil {
+		return s, err
+	}
+
+	wiredTiger, ok := result["wiredTiger"].(bson.M)
+	if !ok {
+		return s, fmt.Errorf("wiredTiger stats not present (requires WiredTiger storage engine)")
+	}
+	cache, ok := wiredTiger["cache"].(bson.M)
+	if !ok {
+		return s, fmt.Errorf("wiredTiger.cache stats not present")
+	}
+
+	s.Requested = toInt64(cache["pages requested from the cache"])
+	s.ReadInto = toInt64(cache["pages read into cache"])
+
+	return s, nil
+}
+
+func toInt64(v interface{}) int64 {
+	switch n := v.(type) {
+	case int32:
+		return int64(n)
+	case int64:
+		return n
+	case float64:
+		return int64(n)
+	default:
+		return 0
+	}
+}
+
+func metricsHandler(w http.ResponseWriter, r *http.Request) {
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	stats, err := collectCacheStats(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// pages served from cache without going to disk
+	hits := stats.Requested - stats.ReadInto
+
+	w.Header().Set("Content-Type", "text/plain; version=0.0.4")
+
+	fmt.Fprintf(w, "# HELP mongo_wt_cache_hit_pages_total WiredTiger cache pages served from memory without a disk read\n")
+	fmt.Fprintf(w, "# TYPE mongo_wt_cache_hit_pages_total counter\n")
+	fmt.Fprintf(w, "mongo_wt_cache_hit_pages_total %d\n", hits)
+
+	fmt.Fprintf(w, "# HELP mongo_wt_cache_read_pages_total WiredTiger cache pages read from disk into cache\n")
+	fmt.Fprintf(w, "# TYPE mongo_wt_cache_read_pages_total counter\n")
+	fmt.Fprintf(w, "mongo_wt_cache_read_pages_total %d\n", stats.ReadInto)
+}
+
+func main() {
+	client = connect()
+	defer client.Disconnect(context.Background())
+
+	http.HandleFunc("/metrics", metricsHandler)
+	fmt.Println("mongo-hit-read-stats-exporter listening on :9104")
+	if err := http.ListenAndServe(":9104", nil); err != nil {
+		panic(err)
+	}
+}
