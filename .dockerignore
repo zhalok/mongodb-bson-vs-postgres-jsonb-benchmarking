@@ -1,6 +1,6 @@
 node_modules
 mongo-data
 postgres-data
-client
+clients
 scripts
 .git

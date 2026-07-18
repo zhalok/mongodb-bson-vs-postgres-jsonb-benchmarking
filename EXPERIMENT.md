@@ -10,11 +10,11 @@ behavior) via Prometheus/Grafana.
 ## Topology
 
 Two parallel stacks, defined in `compose.yml`, sharing the same Node/Express
-app (`server.js`) and business logic (`services/orders.service.js`), differing
+app (`server/index.js`) and business logic (`server/services/orders.service.js`), differing
 only in the storage repository selected via the `DB` env var:
 
-- **Postgres stack**: `postgres` → `server-postgres` (port 3001) → `client-postgres` (writer) + `reader-postgres` (reader)
-- **Mongo stack**: `mongodb` → `server-mongo` (port 3002) → `client-mongo` (writer) + `reader-mongo` (reader)
+- **Postgres stack**: `postgres` → `server-postgres` (port 3001) → `writer-postgres` (writer) + `reader-postgres` (reader)
+- **Mongo stack**: `mongodb` → `server-mongo` (port 3002) → `writer-mongo` (writer) + `reader-mongo` (reader)
 
 Both stacks run against the same host machine simultaneously so results are
 comparable. Observability is shared: `cgroup-exporter` → `prometheus` →
@@ -38,7 +38,7 @@ columns.
 
 ## Write path
 
-`client/main.go` is a Go load generator: a pool of workers repeatedly POST
+`clients/writer/main.go` is a Go load generator: a pool of workers repeatedly POST
 new orders to `/orders` (via `services/orders.service.js` →
 `createOrder`/`createOrderHandler`), each stamped with `timestamp = now()` at
 insert time. Because timestamps are assigned at write time, new rows are
@@ -47,7 +47,7 @@ frontier only ever moves forward.
 
 ## Read path
 
-`client-reader/main.go` is a separate Go worker pool that continuously scans
+`clients/reader/main.go` is a separate Go worker pool that continuously scans
 the *entire* table/collection via keyset (cursor) pagination on `timestamp`,
 1000 rows per page (`PAGE_SIZE` in both repositories), looping until
 `next_cursor` comes back null and then restarting. Each page fetch is a real
