@@ -186,7 +186,7 @@
             "spec": {
               "element": {
                 "kind": "ElementReference",
-                "name": "postgres-table-and-index-sizes"
+                "name": "orders-table-collection-size-postgres-vs-mongodb"
               },
               "height": 8,
               "width": 24,
@@ -199,7 +199,7 @@
             "spec": {
               "element": {
                 "kind": "ElementReference",
-                "name": "mongodb-collection-and-index-sizes"
+                "name": "index-size-postgres-vs-mongodb"
               },
               "height": 8,
               "width": 24,
@@ -212,38 +212,12 @@
             "spec": {
               "element": {
                 "kind": "ElementReference",
-                "name": "orders-table-collection-size-postgres-vs-mongodb"
-              },
-              "height": 8,
-              "width": 24,
-              "x": 0,
-              "y": 64
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "element": {
-                "kind": "ElementReference",
-                "name": "index-size-postgres-vs-mongodb"
-              },
-              "height": 8,
-              "width": 24,
-              "x": 0,
-              "y": 72
-            }
-          },
-          {
-            "kind": "GridLayoutItem",
-            "spec": {
-              "element": {
-                "kind": "ElementReference",
                 "name": "total-size-table-collection-index-postgres-vs-mongodb"
               },
               "height": 8,
               "width": 24,
               "x": 0,
-              "y": 80
+              "y": 64
             }
           }
         ]
