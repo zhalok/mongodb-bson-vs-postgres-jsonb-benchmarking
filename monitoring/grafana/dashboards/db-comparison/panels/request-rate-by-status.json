@@ -91,6 +91,36 @@
           },
           "overrides": [
             {
+              "matcher": {
+                "id": "byRegexp",
+                "options": "/(?i)postgres/"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "blue"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": "/(?i)mongo/"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "fixed",
+                    "fixedColor": "green"
+                  }
+                }
+              ]
+            },
+            {
               "__systemRef": "hideSeriesFrom",
               "matcher": {
                 "id": "byNames",
