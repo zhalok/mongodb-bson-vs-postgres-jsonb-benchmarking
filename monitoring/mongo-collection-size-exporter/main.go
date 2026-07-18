@@ -61,7 +61,9 @@ func collectSizeStats(ctx context.Context) (sizeStats, error) {
 	}
 
 	s.CollectionBytes = result.Size
-	s.IndexBytes = result.IndexSizes["_id_"]
+	for _, size := range result.IndexSizes {
+		s.IndexBytes += size
+	}
 
 	return s, nil
 }
@@ -82,9 +84,9 @@ func metricsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "# TYPE mongo_collection_size_bytes gauge\n")
 	fmt.Fprintf(w, "mongo_collection_size_bytes{collection=\"orders\"} %d\n", stats.CollectionBytes)
 
-	fmt.Fprintf(w, "# HELP mongo_index_size_bytes Size of the _id_ index in bytes\n")
+	fmt.Fprintf(w, "# HELP mongo_index_size_bytes Combined size of all indexes on the orders collection in bytes\n")
 	fmt.Fprintf(w, "# TYPE mongo_index_size_bytes gauge\n")
-	fmt.Fprintf(w, "mongo_index_size_bytes{index=\"_id_\"} %d\n", stats.IndexBytes)
+	fmt.Fprintf(w, "mongo_index_size_bytes{collection=\"orders\",index=\"all\"} %d\n", stats.IndexBytes)
 }
 
 func main() {

@@ -56,7 +56,7 @@ func collectSizeStats(ctx context.Context) (sizeStats, error) {
 		return s, err
 	}
 
-	if err := db.QueryRowContext(ctx, `SELECT pg_relation_size('orders_pkey')`).Scan(&s.IndexBytes); err != nil {
+	if err := db.QueryRowContext(ctx, `SELECT pg_indexes_size('orders')`).Scan(&s.IndexBytes); err != nil {
 		return s, err
 	}
 
@@ -79,9 +79,9 @@ func metricsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "# TYPE pg_table_size_bytes gauge\n")
 	fmt.Fprintf(w, "pg_table_size_bytes{table=\"orders\"} %d\n", stats.TableBytes)
 
-	fmt.Fprintf(w, "# HELP pg_index_size_bytes Size of the orders_pkey index in bytes\n")
+	fmt.Fprintf(w, "# HELP pg_index_size_bytes Combined size of all indexes on the orders table in bytes\n")
 	fmt.Fprintf(w, "# TYPE pg_index_size_bytes gauge\n")
-	fmt.Fprintf(w, "pg_index_size_bytes{index=\"orders_pkey\"} %d\n", stats.IndexBytes)
+	fmt.Fprintf(w, "pg_index_size_bytes{table=\"orders\",index=\"all\"} %d\n", stats.IndexBytes)
 }
 
 func main() {
