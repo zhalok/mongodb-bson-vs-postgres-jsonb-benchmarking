@@ -837,7 +837,7 @@
                       "group": "",
                       "kind": "DataQuery",
                       "spec": {
-                        "expr": "pg_table_size_bytes{table=\"orders\"} + pg_index_size_bytes{table=\"orders\",index=\"all\"}",
+                        "expr": "pg_table_size_bytes{table=\"orders\"} + ignoring(index) pg_index_size_bytes{table=\"orders\",index=\"all\"}",
                         "legendFormat": "postgres: orders + all indexes"
                       },
                       "version": "v0"
@@ -853,7 +853,7 @@
                       "group": "",
                       "kind": "DataQuery",
                       "spec": {
-                        "expr": "mongo_collection_size_bytes{collection=\"orders\"} + mongo_index_size_bytes{collection=\"orders\",index=\"all\"}",
+                        "expr": "mongo_collection_size_bytes{collection=\"orders\"} + ignoring(index) mongo_index_size_bytes{collection=\"orders\",index=\"all\"}",
                         "legendFormat": "mongodb: orders + all indexes"
                       },
                       "version": "v0"
