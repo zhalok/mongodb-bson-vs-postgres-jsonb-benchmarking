@@ -8,7 +8,8 @@
     "insert:customers": "node insert_customers.js",
     "start": "node server/index.js",
     "start:postgres": "DB=postgres PORT=3001 node server/index.js",
-    "start:mongo": "DB=mongo PORT=3002 node server/index.js"
+    "start:mongo": "DB=mongo PORT=3002 node server/index.js",
+    "grafana:build": "node monitoring/grafana/build-dashboards.js"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
