@@ -184,6 +184,19 @@ services:
       postgres:
         condition: service_healthy
 
+  mongo-collection-size-exporter:
+    build: ./monitoring/mongo-collection-size-exporter
+    container_name: mongo-collection-size-exporter
+    restart: always
+    environment:
+      - MONGO_URI=mongodb://mongo:mongo@mongodb:27017
+      - MONGO_DB=jsonb_experiments
+    ports:
+      - 9103:9103
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -197,6 +210,7 @@ services:
       - cgroup-exporter
       - postgres-exporter
       - pg-table-size-exporter
+      - mongo-collection-size-exporter
 
   loki:
     image: grafana/loki:latest
