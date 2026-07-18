@@ -152,9 +152,9 @@ services:
     ports:
       - 9100:9100
 
-  postgres-exporter:
-    build: ./monitoring/postgres-exporter
-    container_name: postgres-exporter
+  postgres-hit-read-stats-exporter:
+    build: ./monitoring/postgres-hit-read-stats-exporter
+    container_name: postgres-hit-read-stats-exporter
     restart: always
     environment:
       - PGHOST=postgres
@@ -208,7 +208,7 @@ services:
       - 9090:9090
     depends_on:
       - cgroup-exporter
-      - postgres-exporter
+      - postgres-hit-read-stats-exporter
       - pg-table-size-exporter
       - mongo-collection-size-exporter
 
