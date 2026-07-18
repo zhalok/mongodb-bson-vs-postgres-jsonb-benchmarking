@@ -58,28 +58,27 @@ export async function transitionStatus(orderId, expectedStatus, newStatus, event
 
 const PAGE_SIZE = 1000;
 
-export async function getOrders(cursor) {
+export async function getOrders(cursor, status) {
   const { rows } = await pool.query(
     `SELECT
        order_id,
        "timestamp",
        jsonb_build_object(
          'id', customer->>'id',
-         'tier', customer->>'tier',
          'geo_location', jsonb_build_object(
            'country', customer#>>'{session_context,geo_location,country}'
          )
        ) AS customer,
        jsonb_build_object(
-         'amount', jsonb_build_object(
-           'final_total', (financials#>>'{amounts,final_total}')::numeric
-         )
+         'final_total', (financials#>>'{amounts,final_total}')::numeric,
+         'currency', financials->>'currency'
        ) AS financials
      FROM orders
-     WHERE $1::timestamptz IS NULL OR "timestamp" > $1
+     WHERE ($1::timestamptz IS NULL OR "timestamp" > $1)
+       AND ($2::text IS NULL OR status = $2)
      ORDER BY "timestamp" ASC
      LIMIT ${PAGE_SIZE}`,
-    [cursor ?? null]
+    [cursor ?? null, status ?? null]
   );
 
   const next_cursor = rows.length === PAGE_SIZE ? rows[rows.length - 1].timestamp : null;
