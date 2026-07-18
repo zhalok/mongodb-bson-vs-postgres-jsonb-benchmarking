@@ -1,4 +1,4 @@
-module postgres-exporter
+module postgres-hit-read-stats-exporter
 
 go 1.25.0
 

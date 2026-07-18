@@ -186,7 +186,7 @@
             "spec": {
               "element": {
                 "kind": "ElementReference",
-                "name": "orders-table-collection-size-postgres-vs-mongodb"
+                "name": "mongo-wt-cache-hit-vs-disk-read-pages-s"
               },
               "height": 8,
               "width": 24,
@@ -199,7 +199,7 @@
             "spec": {
               "element": {
                 "kind": "ElementReference",
-                "name": "index-size-postgres-vs-mongodb"
+                "name": "orders-table-collection-size-postgres-vs-mongodb"
               },
               "height": 8,
               "width": 24,
@@ -212,12 +212,51 @@
             "spec": {
               "element": {
                 "kind": "ElementReference",
-                "name": "total-size-table-collection-index-postgres-vs-mongodb"
+                "name": "index-size-postgres-vs-mongodb"
               },
               "height": 8,
               "width": 24,
               "x": 0,
               "y": 64
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "total-size-table-collection-index-postgres-vs-mongodb"
+              },
+              "height": 8,
+              "width": 24,
+              "x": 0,
+              "y": 72
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "postgres-vs-mongo-cache-hit-rate-s"
+              },
+              "height": 8,
+              "width": 24,
+              "x": 0,
+              "y": 80
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "postgres-vs-mongo-disk-read-rate-s"
+              },
+              "height": 8,
+              "width": 24,
+              "x": 0,
+              "y": 88
             }
           }
         ]

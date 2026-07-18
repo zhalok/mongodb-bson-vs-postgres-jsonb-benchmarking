@@ -85,7 +85,7 @@ func main() {
 	defer db.Close()
 
 	http.HandleFunc("/metrics", metricsHandler)
-	fmt.Println("postgres-exporter listening on :9101")
+	fmt.Println("postgres-hit-read-stats-exporter listening on :9101")
 	if err := http.ListenAndServe(":9101", nil); err != nil {
 		panic(err)
 	}
