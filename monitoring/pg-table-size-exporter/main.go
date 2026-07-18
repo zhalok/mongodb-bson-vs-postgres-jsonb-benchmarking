@@ -12,8 +12,8 @@ import (
 )
 
 type sizeStats struct {
-	TableBytes map[string]int64
-	IndexBytes map[string]int64
+	TableBytes int64
+	IndexBytes int64
 }
 
 var db *sql.DB
@@ -50,50 +50,13 @@ func envOr(key, fallback string) string {
 }
 
 func collectSizeStats(ctx context.Context) (sizeStats, error) {
-	s := sizeStats{
-		TableBytes: make(map[string]int64),
-		IndexBytes: make(map[string]int64),
-	}
+	var s sizeStats
 
-	tableRows, err := db.QueryContext(ctx, `
-		SELECT relname, pg_relation_size(oid)
-		FROM pg_class
-		WHERE relkind = 'r' AND relnamespace = 'public'::regnamespace
-	`)
-	if err != nil {
-		return s, err
-	}
-	defer tableRows.Close()
-	for tableRows.Next() {
-		var name string
-		var bytes int64
-		if err := tableRows.Scan(&name, &bytes); err != nil {
-			return s, err
-		}
-		s.TableBytes[name] = bytes
-	}
-	if err := tableRows.Err(); err != nil {
+	if err := db.QueryRowContext(ctx, `SELECT pg_relation_size('orders')`).Scan(&s.TableBytes); err != nil {
 		return s, err
 	}
 
-	indexRows, err := db.QueryContext(ctx, `
-		SELECT relname, pg_relation_size(oid)
-		FROM pg_class
-		WHERE relkind = 'i' AND relnamespace = 'public'::regnamespace
-	`)
-	if err != nil {
-		return s, err
-	}
-	defer indexRows.Close()
-	for indexRows.Next() {
-		var name string
-		var bytes int64
-		if err := indexRows.Scan(&name, &bytes); err != nil {
-			return s, err
-		}
-		s.IndexBytes[name] = bytes
-	}
-	if err := indexRows.Err(); err != nil {
+	if err := db.QueryRowContext(ctx, `SELECT pg_relation_size('orders_pkey')`).Scan(&s.IndexBytes); err != nil {
 		return s, err
 	}
 
@@ -112,17 +75,13 @@ func metricsHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4")
 
-	fmt.Fprintf(w, "# HELP pg_table_size_bytes Size of a table in bytes\n")
+	fmt.Fprintf(w, "# HELP pg_table_size_bytes Size of the orders table in bytes\n")
 	fmt.Fprintf(w, "# TYPE pg_table_size_bytes gauge\n")
-	for name, bytes := range stats.TableBytes {
-		fmt.Fprintf(w, "pg_table_size_bytes{table=\"%s\"} %d\n", name, bytes)
-	}
+	fmt.Fprintf(w, "pg_table_size_bytes{table=\"orders\"} %d\n", stats.TableBytes)
 
-	fmt.Fprintf(w, "# HELP pg_index_size_bytes Size of an index in bytes\n")
+	fmt.Fprintf(w, "# HELP pg_index_size_bytes Size of the orders_pkey index in bytes\n")
 	fmt.Fprintf(w, "# TYPE pg_index_size_bytes gauge\n")
-	for name, bytes := range stats.IndexBytes {
-		fmt.Fprintf(w, "pg_index_size_bytes{index=\"%s\"} %d\n", name, bytes)
-	}
+	fmt.Fprintf(w, "pg_index_size_bytes{index=\"orders_pkey\"} %d\n", stats.IndexBytes)
 }
 
 func main() {
