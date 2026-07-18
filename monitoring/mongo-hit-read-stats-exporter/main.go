@@ -54,11 +54,11 @@ func collectCacheStats(ctx context.Context) (cacheStats, error) {
 		return s, err
 	}
 
-	wiredTiger, ok := result["wiredTiger"].(bson.M)
+	wiredTiger, ok := docToM(result["wiredTiger"])
 	if !ok {
 		return s, fmt.Errorf("wiredTiger stats not present (requires WiredTiger storage engine)")
 	}
-	cache, ok := wiredTiger["cache"].(bson.M)
+	cache, ok := docToM(wiredTiger["cache"])
 	if !ok {
 		return s, fmt.Errorf("wiredTiger.cache stats not present")
 	}
@@ -67,6 +67,21 @@ func collectCacheStats(ctx context.Context) (cacheStats, error) {
 	s.ReadInto = toInt64(cache["pages read into cache"])
 
 	return s, nil
+}
+
+func docToM(v interface{}) (bson.M, bool) {
+	switch d := v.(type) {
+	case bson.M:
+		return d, true
+	case bson.D:
+		m := make(bson.M, len(d))
+		for _, e := range d {
+			m[e.Key] = e.Value
+		}
+		return m, true
+	default:
+		return nil, false
+	}
 }
 
 func toInt64(v interface{}) int64 {
