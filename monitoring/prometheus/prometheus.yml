@@ -9,3 +9,11 @@ scrape_configs:
   - job_name: postgres-exporter
     static_configs:
       - targets: ["postgres-exporter:9101"]
+
+  - job_name: pg-table-size-exporter
+    static_configs:
+      - targets: ["pg-table-size-exporter:9102"]
+
+  - job_name: mongo-collection-size-exporter
+    static_configs:
+      - targets: ["mongo-collection-size-exporter:9103"]
