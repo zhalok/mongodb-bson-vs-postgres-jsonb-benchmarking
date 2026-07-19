@@ -258,6 +258,19 @@
               "x": 0,
               "y": 88
             }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "mongodb-storage-size"
+              },
+              "height": 8,
+              "width": 24,
+              "x": 0,
+              "y": 96
+            }
           }
         ]
       }
