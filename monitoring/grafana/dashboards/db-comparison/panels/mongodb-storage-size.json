@@ -10,15 +10,42 @@
             "spec": {
               "hidden": false,
               "query": {
-                "group": "",
+                "datasource": {
+                  "name": "PBFA97CFB590B2093"
+                },
+                "group": "prometheus",
                 "kind": "DataQuery",
                 "spec": {
-                  "expr": "avg(mongo_total_size_bytes{})",
-                  "legendFormat": "avg"
+                  "editorMode": "code",
+                  "expr": "sum(mongo_total_size_bytes{})",
+                  "legendFormat": "mongodb",
+                  "range": true
                 },
                 "version": "v0"
               },
-              "refId": "A"
+              "refId": "mongodb"
+            }
+          },
+          {
+            "kind": "PanelQuery",
+            "spec": {
+              "hidden": false,
+              "query": {
+                "datasource": {
+                  "name": "PBFA97CFB590B2093"
+                },
+                "group": "prometheus",
+                "kind": "DataQuery",
+                "spec": {
+                  "editorMode": "code",
+                  "expr": "sum(pg_total_relation_size_bytes{ })",
+                  "instant": false,
+                  "legendFormat": "postgres",
+                  "range": true
+                },
+                "version": "v0"
+              },
+              "refId": "B"
             }
           }
         ],
@@ -29,7 +56,7 @@
     "description": "",
     "id": 20,
     "links": [],
-    "title": "MongoDB Storage Size",
+    "title": "Postgres vs MongoDB Storage Size",
     "vizConfig": {
       "group": "timeseries",
       "kind": "VizConfig",
@@ -37,7 +64,8 @@
         "fieldConfig": {
           "defaults": {
             "color": {
-              "mode": "palette-classic"
+              "mode": "palette-classic",
+              "seriesBy": "max"
             },
             "custom": {
               "axisBorderShow": false,
@@ -46,9 +74,9 @@
               "axisLabel": "",
               "axisPlacement": "auto",
               "barAlignment": 0,
-              "barWidthFactor": 0.6,
+              "barWidthFactor": 0.9,
               "drawStyle": "line",
-              "fillOpacity": 0,
+              "fillOpacity": 50,
               "gradientMode": "none",
               "hideFrom": {
                 "legend": false,
@@ -57,17 +85,20 @@
               },
               "insertNulls": false,
               "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
+              "lineStyle": {
+                "fill": "solid"
+              },
+              "lineWidth": 2,
+              "pointSize": 1,
               "scaleDistribution": {
                 "type": "linear"
               },
-              "showPoints": "auto",
+              "showPoints": "always",
               "showValues": false,
               "spanNulls": false,
               "stacking": {
                 "group": "A",
-                "mode": "none"
+                "mode": "normal"
               },
               "thresholdsStyle": {
                 "mode": "off"

@@ -5,8 +5,8 @@
     "name": "db-comparison",
     "namespace": "default",
     "uid": "eea05d1d-3dc1-429c-8b54-c9a12b307403",
-    "resourceVersion": "1784449341905991",
-    "generation": 6,
+    "resourceVersion": "1784449939974001",
+    "generation": 8,
     "creationTimestamp": "2026-07-19T08:14:34Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "2595932716912640"
@@ -15,11 +15,11 @@
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "cgroup-metrics",
-      "grafana.app/sourceChecksum": "802216c64b31a9bcda0602cf12947d47",
+      "grafana.app/sourceChecksum": "ced8eecdc90352f6c312c3a4842bb12f",
       "grafana.app/sourcePath": "/etc/grafana/dashboards/db-comparison.json",
-      "grafana.app/sourceTimestamp": "1784449323000",
+      "grafana.app/sourceTimestamp": "1784449928000",
       "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/updatedTimestamp": "2026-07-19T08:22:21Z",
+      "grafana.app/updatedTimestamp": "2026-07-19T08:32:19Z",
       "grafana.app/folder": ""
     }
   },
@@ -786,15 +786,42 @@
                   "spec": {
                     "hidden": false,
                     "query": {
-                      "group": "",
+                      "datasource": {
+                        "name": "PBFA97CFB590B2093"
+                      },
+                      "group": "prometheus",
                       "kind": "DataQuery",
                       "spec": {
-                        "expr": "avg(mongo_total_size_bytes{})",
-                        "legendFormat": "avg"
+                        "editorMode": "code",
+                        "expr": "sum(mongo_total_size_bytes{})",
+                        "legendFormat": "mongodb",
+                        "range": true
                       },
                       "version": "v0"
                     },
-                    "refId": "A"
+                    "refId": "mongodb"
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "PBFA97CFB590B2093"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "sum(pg_total_relation_size_bytes{ })",
+                        "instant": false,
+                        "legendFormat": "postgres",
+                        "range": true
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "B"
                   }
                 }
               ],
@@ -805,7 +832,7 @@
           "description": "",
           "id": 20,
           "links": [],
-          "title": "MongoDB Storage Size",
+          "title": "Postgres vs MongoDB Storage Size",
           "vizConfig": {
             "group": "timeseries",
             "kind": "VizConfig",
@@ -813,7 +840,8 @@
               "fieldConfig": {
                 "defaults": {
                   "color": {
-                    "mode": "palette-classic"
+                    "mode": "palette-classic",
+                    "seriesBy": "max"
                   },
                   "custom": {
                     "axisBorderShow": false,
@@ -822,9 +850,9 @@
                     "axisLabel": "",
                     "axisPlacement": "auto",
                     "barAlignment": 0,
-                    "barWidthFactor": 0.6,
+                    "barWidthFactor": 0.9,
                     "drawStyle": "line",
-                    "fillOpacity": 0,
+                    "fillOpacity": 50,
                     "gradientMode": "none",
                     "hideFrom": {
                       "legend": false,
@@ -833,17 +861,20 @@
                     },
                     "insertNulls": false,
                     "lineInterpolation": "linear",
-                    "lineWidth": 1,
-                    "pointSize": 5,
+                    "lineStyle": {
+                      "fill": "solid"
+                    },
+                    "lineWidth": 2,
+                    "pointSize": 1,
                     "scaleDistribution": {
                       "type": "linear"
                     },
-                    "showPoints": "auto",
+                    "showPoints": "always",
                     "showValues": false,
                     "spanNulls": false,
                     "stacking": {
                       "group": "A",
-                      "mode": "none"
+                      "mode": "normal"
                     },
                     "thresholdsStyle": {
                       "mode": "off"
@@ -2385,7 +2416,7 @@
                 "name": "mongodb-storage-size"
               },
               "height": 11,
-              "width": 12,
+              "width": 24,
               "x": 0,
               "y": 96
             }
