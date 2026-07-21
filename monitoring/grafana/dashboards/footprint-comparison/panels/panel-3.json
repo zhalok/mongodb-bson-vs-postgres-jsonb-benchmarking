@@ -17,7 +17,7 @@
                 "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
-                  "expr": "sum(rate(mongo_wt_cache_requested_memory_footprint_bytes{ }[$__rate_interval]))",
+                  "expr": "sum(rate(mongo_wt_cache_requested_pages_total{ }[$__rate_interval])) * avg(mongo_wt_leaf_page_max_bytes{ })",
                   "fromExploreMetrics": true,
                   "interval": "",
                   "legendFormat": "mongodb memory footprint (total pages requested * page size)",
@@ -40,7 +40,7 @@
                 "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
-                  "expr": "sum(rate(pg_stat_database_memory_footprint_bytes{ }[$__rate_interval]))",
+                  "expr": "sum(rate(pg_stat_database_blks_read_total{}[$__rate_interval]) + rate(pg_stat_database_blks_hit_total{}[$__rate_interval])) * avg(pg_block_size_bytes)\n",
                   "instant": false,
                   "legendFormat": "postgres memory footprint ( (total blk hit + total blk read) * blk size )",
                   "range": true
@@ -121,7 +121,32 @@
             },
             "unit": "bytes"
           },
-          "overrides": []
+          "overrides": [
+            {
+              "__systemRef": "hideSeriesFrom",
+              "matcher": {
+                "id": "byNames",
+                "options": {
+                  "mode": "exclude",
+                  "names": [
+                    "postgres memory footprint ( (total blk hit + total blk read) * blk size )"
+                  ],
+                  "prefix": "All except:",
+                  "readOnly": true
+                }
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "value": {
+                    "legend": false,
+                    "tooltip": true,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
         },
         "options": {
           "annotations": {

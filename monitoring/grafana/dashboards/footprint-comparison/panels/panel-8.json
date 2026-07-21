@@ -17,7 +17,7 @@
                 "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
-                  "expr": "sum(rate(mongo_wt_cache_hit_pages_total{ }[$__rate_interval]))*4",
+                  "expr": "sum(rate(mongo_wt_cache_hit_pages_total{}[$__rate_interval])) * avg(mongo_wt_leaf_page_max_bytes)",
                   "legendFormat": "mongodb cache read",
                   "range": true
                 },
@@ -38,7 +38,7 @@
                 "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
-                  "expr": "sum(rate(pg_stat_database_blks_hit_total{ }[$__rate_interval]))*8",
+                  "expr": "sum(rate(pg_stat_database_blks_hit_total{}[$__rate_interval])) * avg(pg_block_size_bytes)\n",
                   "instant": false,
                   "legendFormat": "pg cache read",
                   "range": true
@@ -113,9 +113,34 @@
                 }
               ]
             },
-            "unit": "deckbytes"
+            "unit": "bytes"
           },
-          "overrides": []
+          "overrides": [
+            {
+              "__systemRef": "hideSeriesFrom",
+              "matcher": {
+                "id": "byNames",
+                "options": {
+                  "mode": "exclude",
+                  "names": [
+                    "pg cache read"
+                  ],
+                  "prefix": "All except:",
+                  "readOnly": true
+                }
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "value": {
+                    "legend": false,
+                    "tooltip": true,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
         },
         "options": {
           "annotations": {
