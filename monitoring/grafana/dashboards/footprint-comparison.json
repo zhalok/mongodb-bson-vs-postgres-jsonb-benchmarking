@@ -4,22 +4,22 @@
   "metadata": {
     "name": "adfl9tc",
     "namespace": "default",
-    "uid": "70f49d24-2544-445e-beef-bfde578e675d",
-    "resourceVersion": "1784642170173016",
+    "uid": "b630182e-1873-4bb3-ba51-54f7caf9fa05",
+    "resourceVersion": "1784643309709020",
     "generation": 3,
-    "creationTimestamp": "2026-07-21T13:55:29Z",
+    "creationTimestamp": "2026-07-21T14:14:38Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "3406503817359360"
+      "grafana.app/deprecatedInternalID": "3411322820218880"
     },
     "annotations": {
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "cgroup-metrics",
-      "grafana.app/sourceChecksum": "099364d10b44d12a3cd84b0c86f29f24",
+      "grafana.app/sourceChecksum": "4ea224eeaaac568b1e5a6c20054ffc5a",
       "grafana.app/sourcePath": "/etc/grafana/dashboards/footprint-comparison.json",
-      "grafana.app/sourceTimestamp": "1784641775000",
+      "grafana.app/sourceTimestamp": "1784642408000",
       "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/updatedTimestamp": "2026-07-21T13:56:10Z",
+      "grafana.app/updatedTimestamp": "2026-07-21T14:15:09Z",
       "grafana.app/folder": ""
     }
   },
@@ -971,14 +971,38 @@
                       "group": "prometheus",
                       "kind": "DataQuery",
                       "spec": {
+                        "editorMode": "code",
                         "expr": "avg(pg_query_avg_exec_time_ms{ })",
                         "fromExploreMetrics": true,
                         "interval": "",
-                        "legendFormat": "avg"
+                        "legendFormat": "postgres",
+                        "range": true
                       },
                       "version": "v0"
                     },
                     "refId": "pg_query_avg_exec_time_ms-avg"
+                  }
+                },
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "hidden": false,
+                    "query": {
+                      "datasource": {
+                        "name": "PBFA97CFB590B2093"
+                      },
+                      "group": "prometheus",
+                      "kind": "DataQuery",
+                      "spec": {
+                        "editorMode": "code",
+                        "expr": "avg(mongo_query_avg_exec_time_ms{ })",
+                        "instant": false,
+                        "legendFormat": "mongodb",
+                        "range": true
+                      },
+                      "version": "v0"
+                    },
+                    "refId": "A"
                   }
                 }
               ],

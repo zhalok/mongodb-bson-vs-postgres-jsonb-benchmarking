@@ -16,14 +16,38 @@
                 "group": "prometheus",
                 "kind": "DataQuery",
                 "spec": {
+                  "editorMode": "code",
                   "expr": "avg(pg_query_avg_exec_time_ms{ })",
                   "fromExploreMetrics": true,
                   "interval": "",
-                  "legendFormat": "avg"
+                  "legendFormat": "postgres",
+                  "range": true
                 },
                 "version": "v0"
               },
               "refId": "pg_query_avg_exec_time_ms-avg"
+            }
+          },
+          {
+            "kind": "PanelQuery",
+            "spec": {
+              "hidden": false,
+              "query": {
+                "datasource": {
+                  "name": "PBFA97CFB590B2093"
+                },
+                "group": "prometheus",
+                "kind": "DataQuery",
+                "spec": {
+                  "editorMode": "code",
+                  "expr": "avg(mongo_query_avg_exec_time_ms{ })",
+                  "instant": false,
+                  "legendFormat": "mongodb",
+                  "range": true
+                },
+                "version": "v0"
+              },
+              "refId": "A"
             }
           }
         ],
