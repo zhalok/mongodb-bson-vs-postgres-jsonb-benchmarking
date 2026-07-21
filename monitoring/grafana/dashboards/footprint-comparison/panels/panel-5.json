@@ -1,10 +1,6 @@
 {
   "kind": "Panel",
   "spec": {
-    "id": 5,
-    "title": "Postgres storage breakdown",
-    "description": "",
-    "links": [],
     "data": {
       "kind": "QueryGroup",
       "spec": {
@@ -12,132 +8,102 @@
           {
             "kind": "PanelQuery",
             "spec": {
+              "hidden": false,
               "query": {
-                "kind": "DataQuery",
-                "group": "prometheus",
-                "version": "v0",
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
                 },
+                "group": "prometheus",
+                "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
                   "expr": "avg(pg_total_relation_size_bytes{ })",
                   "legendFormat": "total size",
                   "range": true
-                }
+                },
+                "version": "v0"
               },
-              "refId": "pg_total_size",
-              "hidden": false
+              "refId": "pg_total_size"
             }
           },
           {
             "kind": "PanelQuery",
             "spec": {
+              "hidden": false,
               "query": {
-                "kind": "DataQuery",
-                "group": "prometheus",
-                "version": "v0",
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
                 },
+                "group": "prometheus",
+                "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
                   "expr": "avg(pg_table_size_bytes{ })",
                   "instant": false,
                   "legendFormat": "table size",
                   "range": true
-                }
+                },
+                "version": "v0"
               },
-              "refId": "pg_table_size",
-              "hidden": false
+              "refId": "pg_table_size"
             }
           },
           {
             "kind": "PanelQuery",
             "spec": {
+              "hidden": false,
               "query": {
-                "kind": "DataQuery",
-                "group": "prometheus",
-                "version": "v0",
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
                 },
+                "group": "prometheus",
+                "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
                   "expr": "avg(pg_index_size_bytes{ })",
                   "instant": false,
                   "legendFormat": "index size",
                   "range": true
-                }
+                },
+                "version": "v0"
               },
-              "refId": "pg_index_size",
-              "hidden": false
+              "refId": "pg_index_size"
             }
           },
           {
             "kind": "PanelQuery",
             "spec": {
+              "hidden": false,
               "query": {
-                "kind": "DataQuery",
-                "group": "__expr__",
-                "version": "v0",
                 "datasource": {
                   "name": "__expr__"
                 },
+                "group": "__expr__",
+                "kind": "DataQuery",
                 "spec": {
                   "expression": "$pg_total_size - ($pg_table_size + $pg_index_size)",
                   "type": "math"
-                }
+                },
+                "version": "v0"
               },
-              "refId": "toast_table_size",
-              "hidden": false
+              "refId": "toast_table_size"
             }
           }
         ],
-        "transformations": [],
-        "queryOptions": {}
+        "queryOptions": {},
+        "transformations": []
       }
     },
+    "description": "",
+    "id": 5,
+    "links": [],
+    "title": "Postgres storage breakdown",
     "vizConfig": {
-      "kind": "VizConfig",
       "group": "timeseries",
-      "version": "13.1.0",
+      "kind": "VizConfig",
       "spec": {
-        "options": {
-          "annotations": {
-            "clustering": -1,
-            "multiLane": false
-          },
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "enableFacetedFilter": true,
-            "overflow": "ellipsis",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
-        },
         "fieldConfig": {
           "defaults": {
-            "unit": "bytes",
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "value": 0,
-                  "color": "green"
-                },
-                {
-                  "value": 80,
-                  "color": "red"
-                }
-              ]
-            },
             "color": {
               "mode": "palette-classic",
               "seriesBy": "max"
@@ -178,11 +144,45 @@
               "thresholdsStyle": {
                 "mode": "off"
               }
-            }
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "bytes"
           },
           "overrides": []
+        },
+        "options": {
+          "annotations": {
+            "clustering": -1,
+            "multiLane": false
+          },
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "enableFacetedFilter": true,
+            "overflow": "ellipsis",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
         }
-      }
+      },
+      "version": "13.1.0"
     }
   }
 }

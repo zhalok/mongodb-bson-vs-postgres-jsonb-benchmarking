@@ -1,10 +1,6 @@
 {
   "kind": "Panel",
   "spec": {
-    "id": 1,
-    "title": "Disk write rate",
-    "description": "",
-    "links": [],
     "data": {
       "kind": "QueryGroup",
       "spec": {
@@ -12,67 +8,38 @@
           {
             "kind": "PanelQuery",
             "spec": {
+              "hidden": false,
               "query": {
-                "kind": "DataQuery",
-                "group": "prometheus",
-                "version": "v0",
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
                 },
+                "group": "prometheus",
+                "kind": "DataQuery",
                 "spec": {
                   "expr": "sum by (container_name) (rate(cgroup_io_write_bytes_total{container_name=~\"postgres|mongodb\"}[1m]))",
                   "interval": "",
                   "legendFormat": "{{container_name}}"
-                }
+                },
+                "version": "v0"
               },
-              "refId": "A",
-              "hidden": false
+              "refId": "A"
             }
           }
         ],
-        "transformations": [],
-        "queryOptions": {}
+        "queryOptions": {},
+        "transformations": []
       }
     },
+    "description": "",
+    "id": 1,
+    "links": [],
+    "title": "Disk write rate",
     "vizConfig": {
-      "kind": "VizConfig",
       "group": "timeseries",
-      "version": "13.1.0",
+      "kind": "VizConfig",
       "spec": {
-        "options": {
-          "annotations": {
-            "clustering": -1,
-            "multiLane": false
-          },
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "enableFacetedFilter": false,
-            "overflow": "ellipsis",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
-        },
         "fieldConfig": {
           "defaults": {
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "value": 0,
-                  "color": "green"
-                },
-                {
-                  "value": 80,
-                  "color": "red"
-                }
-              ]
-            },
             "color": {
               "mode": "palette-classic"
             },
@@ -109,11 +76,44 @@
               "thresholdsStyle": {
                 "mode": "off"
               }
+            },
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
             }
           },
           "overrides": []
+        },
+        "options": {
+          "annotations": {
+            "clustering": -1,
+            "multiLane": false
+          },
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "enableFacetedFilter": false,
+            "overflow": "ellipsis",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
         }
-      }
+      },
+      "version": "13.1.0"
     }
   }
 }
