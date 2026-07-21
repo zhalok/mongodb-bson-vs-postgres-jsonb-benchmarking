@@ -5,8 +5,8 @@
     "name": "adfl9tc",
     "namespace": "default",
     "uid": "2e9c0588-d290-46f9-9722-015d9ad3042b",
-    "resourceVersion": "1784636146723008",
-    "generation": 8,
+    "resourceVersion": "1784637253273996",
+    "generation": 16,
     "creationTimestamp": "2026-07-21T12:09:34Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "3379849991835648"
@@ -16,7 +16,7 @@
       "grafana.app/folder": "",
       "grafana.app/saved-from-ui": "Grafana v13.1.0 (b309c9bb3b)",
       "grafana.app/updatedBy": "user:dfsk99i75hn28b",
-      "grafana.app/updatedTimestamp": "2026-07-21T12:15:46Z"
+      "grafana.app/updatedTimestamp": "2026-07-21T12:34:13Z"
     }
   },
   "spec": {
@@ -96,6 +96,19 @@
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-4"
+              }
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "x": 0,
+              "y": 16,
+              "width": 12,
+              "height": 8,
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-5"
               }
             }
           }
