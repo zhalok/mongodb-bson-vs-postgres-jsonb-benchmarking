@@ -105,6 +105,7 @@
         },
         "fieldConfig": {
           "defaults": {
+            "unit": "bytes",
             "thresholds": {
               "mode": "absolute",
               "steps": [
