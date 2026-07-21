@@ -9,6 +9,8 @@ services:
       - "shared_preload_libraries=pg_stat_statements"
       - "-c"
       - "pg_stat_statements.track_planning=on"
+      - "-c"
+      - "shared_buffers=2GB"
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:
@@ -30,13 +32,10 @@ services:
     image: mongo:7
     container_name: mongodb
     restart: always
-    # command:
-    #   - "mongod"
-    #   - "--wiredTigerCollectionBlockCompressor=none"
-    #   - "--wiredTigerJournalCompressor=none"
-    #   - "--wiredTigerIndexPrefixCompression=false"
-    #   - "--setParameter"
-    #   - "diagnosticDataCollectionEnabled=false"
+    command:
+      - "mongod"
+      - "--wiredTigerCacheSizeGB"
+      - "2"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=mongo
       - MONGO_INITDB_ROOT_PASSWORD=mongo
