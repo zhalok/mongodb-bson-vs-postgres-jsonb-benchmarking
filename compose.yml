@@ -203,6 +203,7 @@ services:
     restart: always
     environment:
       - MONGO_URI=mongodb://mongo:mongo@mongodb:27017
+      - MONGO_DB=jsonb_experiments
     ports:
       - 9104:9104
     depends_on:

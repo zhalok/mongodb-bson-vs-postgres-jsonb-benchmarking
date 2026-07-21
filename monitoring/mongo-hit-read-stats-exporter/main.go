@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"regexp"
+	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -17,7 +19,11 @@ type cacheStats struct {
 	ReadInto  int64
 }
 
+var leafPageMaxRe = regexp.MustCompile(`leaf_page_max=(\d+)`)
+
 var client *mongo.Client
+var dbName string
+var collName string
 
 func connect() *mongo.Client {
 	uri := envOr("MONGO_URI", "mongodb://mongo:mongo@mongodb:27017")
@@ -69,6 +75,29 @@ func collectCacheStats(ctx context.Context) (cacheStats, error) {
 	return s, nil
 }
 
+func collectPageSizeBytes(ctx context.Context) (int64, error) {
+	var result bson.M
+	err := client.Database(dbName).RunCommand(ctx, bson.D{
+		{Key: "collStats", Value: collName},
+	}).Decode(&result)
+	if err != nil {
+		return 0, err
+	}
+
+	wiredTiger, ok := docToM(result["wiredTiger"])
+	if !ok {
+		return 0, fmt.Errorf("wiredTiger stats not present for collection %q", collName)
+	}
+	creationString, _ := wiredTiger["creationString"].(string)
+
+	match := leafPageMaxRe.FindStringSubmatch(creationString)
+	if match == nil {
+		return 0, fmt.Errorf("leaf_page_max not found in creationString for collection %q", collName)
+	}
+
+	return strconv.ParseInt(match[1], 10, 64)
+}
+
 func docToM(v interface{}) (bson.M, bool) {
 	switch d := v.(type) {
 	case bson.M:
@@ -107,6 +136,12 @@ func metricsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pageSizeBytes, err := collectPageSizeBytes(ctx)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	// pages served from cache without going to disk
 	hits := stats.Requested - stats.ReadInto
 
@@ -119,11 +154,24 @@ func metricsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "# HELP mongo_wt_cache_read_pages_total WiredTiger cache pages read from disk into cache\n")
 	fmt.Fprintf(w, "# TYPE mongo_wt_cache_read_pages_total counter\n")
 	fmt.Fprintf(w, "mongo_wt_cache_read_pages_total %d\n", stats.ReadInto)
+
+	fmt.Fprintf(w, "# HELP mongo_wt_cache_requested_pages_total WiredTiger cache pages requested from the cache\n")
+	fmt.Fprintf(w, "# TYPE mongo_wt_cache_requested_pages_total counter\n")
+	fmt.Fprintf(w, "mongo_wt_cache_requested_pages_total %d\n", stats.Requested)
+
+	memoryFootprint := stats.Requested * pageSizeBytes
+
+	fmt.Fprintf(w, "# HELP mongo_wt_cache_requested_memory_footprint_bytes Estimated memory footprint of requested cache pages (pages requested * leaf_page_max for collection %q)\n", collName)
+	fmt.Fprintf(w, "# TYPE mongo_wt_cache_requested_memory_footprint_bytes counter\n")
+	fmt.Fprintf(w, "mongo_wt_cache_requested_memory_footprint_bytes %d\n", memoryFootprint)
 }
 
 func main() {
 	client = connect()
 	defer client.Disconnect(context.Background())
+
+	dbName = envOr("MONGO_DB", "jsonb_experiments")
+	collName = envOr("MONGO_COLLECTION", "orders")
 
 	http.HandleFunc("/metrics", metricsHandler)
 	fmt.Println("mongo-hit-read-stats-exporter listening on :9104")
