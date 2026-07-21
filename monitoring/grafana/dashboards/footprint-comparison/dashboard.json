@@ -5,8 +5,8 @@
     "name": "adfl9tc",
     "namespace": "default",
     "uid": "3e895a80-839d-40aa-afcf-cac3c7690414",
-    "resourceVersion": "1784653386520989",
-    "generation": 7,
+    "resourceVersion": "1784653496203999",
+    "generation": 9,
     "creationTimestamp": "2026-07-21T15:14:33Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "3426403326644224"
@@ -15,11 +15,11 @@
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "cgroup-metrics",
-      "grafana.app/sourceChecksum": "47c30e008852b4de822b2873f4fed55a",
+      "grafana.app/sourceChecksum": "b69018630a2fd84d1d4d1b8fd3bfcdaa",
       "grafana.app/sourcePath": "/etc/grafana/dashboards/footprint-comparison.json",
-      "grafana.app/sourceTimestamp": "1784653368000",
+      "grafana.app/sourceTimestamp": "1784653481000",
       "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/updatedTimestamp": "2026-07-21T17:03:06Z",
+      "grafana.app/updatedTimestamp": "2026-07-21T17:04:56Z",
       "grafana.app/folder": ""
     }
   },
@@ -95,7 +95,7 @@
             "spec": {
               "element": {
                 "kind": "ElementReference",
-                "name": "panel-4"
+                "name": "panel-8"
               },
               "height": 8,
               "width": 12,
@@ -139,6 +139,19 @@
               "height": 8,
               "width": 12,
               "x": 0,
+              "y": 24
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-4"
+              },
+              "height": 8,
+              "width": 12,
+              "x": 12,
               "y": 24
             }
           }

@@ -17,15 +17,13 @@
                 "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
-                  "expr": "sum(rate(mongo_wt_cache_requested_memory_footprint_bytes{ }[$__rate_interval]))",
-                  "fromExploreMetrics": true,
-                  "interval": "",
-                  "legendFormat": "mongodb memory footprint (total pages requested * page size)",
+                  "expr": "sum(rate(mongo_wt_cache_hit_pages_total{ }[$__rate_interval]))*4",
+                  "legendFormat": "mongodb cache read",
                   "range": true
                 },
                 "version": "v0"
               },
-              "refId": "mongodb footprint"
+              "refId": "mongodb_pages_read_from_cache"
             }
           },
           {
@@ -40,14 +38,14 @@
                 "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
-                  "expr": "sum(rate(pg_stat_database_memory_footprint_bytes{ }[$__rate_interval]))",
+                  "expr": "sum(rate(pg_stat_database_blks_hit_total{ }[$__rate_interval]))*8",
                   "instant": false,
-                  "legendFormat": "postgres memory footprint ( (total blk hit + total blk read) * blk size )",
+                  "legendFormat": "pg cache read",
                   "range": true
                 },
                 "version": "v0"
               },
-              "refId": "postgres foot print"
+              "refId": "A"
             }
           }
         ],
@@ -56,9 +54,9 @@
       }
     },
     "description": "",
-    "id": 3,
+    "id": 8,
     "links": [],
-    "title": "Memory Footprint MongoDB vs PostgreSQL",
+    "title": "Cache read",
     "vizConfig": {
       "group": "timeseries",
       "kind": "VizConfig",
@@ -66,8 +64,7 @@
         "fieldConfig": {
           "defaults": {
             "color": {
-              "mode": "palette-classic",
-              "seriesBy": "max"
+              "mode": "palette-classic"
             },
             "custom": {
               "axisBorderShow": false,
@@ -76,7 +73,7 @@
               "axisLabel": "",
               "axisPlacement": "auto",
               "barAlignment": 0,
-              "barWidthFactor": 0.9,
+              "barWidthFactor": 0.6,
               "drawStyle": "line",
               "fillOpacity": 0,
               "gradientMode": "none",
@@ -87,15 +84,12 @@
               },
               "insertNulls": false,
               "lineInterpolation": "linear",
-              "lineStyle": {
-                "fill": "solid"
-              },
               "lineWidth": 1,
-              "pointSize": 1,
+              "pointSize": 5,
               "scaleDistribution": {
                 "type": "linear"
               },
-              "showPoints": "always",
+              "showPoints": "auto",
               "showValues": false,
               "spanNulls": false,
               "stacking": {
@@ -119,7 +113,7 @@
                 }
               ]
             },
-            "unit": "bytes"
+            "unit": "deckbytes"
           },
           "overrides": []
         },
