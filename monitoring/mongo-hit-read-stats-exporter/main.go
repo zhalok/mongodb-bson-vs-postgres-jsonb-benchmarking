@@ -19,7 +19,7 @@ type cacheStats struct {
 	ReadInto  int64
 }
 
-var leafPageMaxRe = regexp.MustCompile(`leaf_page_max=(\d+)`)
+var leafPageMaxRe = regexp.MustCompile(`leaf_page_max=(\d+)(KB|MB|GB)?`)
 
 var client *mongo.Client
 var dbName string
@@ -98,7 +98,21 @@ func collectPageSizeBytes(ctx context.Context) (int64, error) {
 		return 0, fmt.Errorf("leaf_page_max not found in creationString for collection %q", collName)
 	}
 
-	return strconv.ParseInt(match[1], 10, 64)
+	n, err := strconv.ParseInt(match[1], 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	switch match[2] {
+	case "KB":
+		n *= 1024
+	case "MB":
+		n *= 1024 * 1024
+	case "GB":
+		n *= 1024 * 1024 * 1024
+	}
+
+	return n, nil
 }
 
 func docToM(v interface{}) (bson.M, bool) {
