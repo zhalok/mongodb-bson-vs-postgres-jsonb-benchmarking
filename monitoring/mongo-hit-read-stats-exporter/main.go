@@ -25,6 +25,9 @@ var client *mongo.Client
 var dbName string
 var collName string
 
+// pageSizeBytes is the WiredTiger leaf_page_max for the collection, fixed at collection-creation time.
+var pageSizeBytes int64
+
 func connect() *mongo.Client {
 	uri := envOr("MONGO_URI", "mongodb://mongo:mongo@mongodb:27017")
 
@@ -136,12 +139,6 @@ func metricsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	pageSizeBytes, err := collectPageSizeBytes(ctx)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	// pages served from cache without going to disk
 	hits := stats.Requested - stats.ReadInto
 
@@ -159,11 +156,9 @@ func metricsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "# TYPE mongo_wt_cache_requested_pages_total counter\n")
 	fmt.Fprintf(w, "mongo_wt_cache_requested_pages_total %d\n", stats.Requested)
 
-	memoryFootprint := stats.Requested * pageSizeBytes
-
-	fmt.Fprintf(w, "# HELP mongo_wt_cache_requested_memory_footprint_bytes Estimated memory footprint of requested cache pages (pages requested * leaf_page_max for collection %q)\n", collName)
-	fmt.Fprintf(w, "# TYPE mongo_wt_cache_requested_memory_footprint_bytes counter\n")
-	fmt.Fprintf(w, "mongo_wt_cache_requested_memory_footprint_bytes %d\n", memoryFootprint)
+	fmt.Fprintf(w, "# HELP mongo_wt_leaf_page_max_bytes WiredTiger leaf_page_max for collection %q, used to convert page counts to bytes\n", collName)
+	fmt.Fprintf(w, "# TYPE mongo_wt_leaf_page_max_bytes gauge\n")
+	fmt.Fprintf(w, "mongo_wt_leaf_page_max_bytes %d\n", pageSizeBytes)
 }
 
 func main() {
@@ -172,6 +167,14 @@ func main() {
 
 	dbName = envOr("MONGO_DB", "jsonb_experiments")
 	collName = envOr("MONGO_COLLECTION", "orders")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	var err error
+	pageSizeBytes, err = collectPageSizeBytes(ctx)
+	if err != nil {
+		panic(err)
+	}
 
 	http.HandleFunc("/metrics", metricsHandler)
 	fmt.Println("mongo-hit-read-stats-exporter listening on :9104")

@@ -88,11 +88,9 @@ func metricsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "# TYPE pg_stat_database_blks_read_total counter\n")
 	fmt.Fprintf(w, "pg_stat_database_blks_read_total %d\n", stats.BlksRead)
 
-	memoryFootprint := (stats.BlksHit + stats.BlksRead) * BlkSizeBytes
-
-	fmt.Fprintf(w, "# HELP pg_stat_database_memory_footprint_bytes Estimated memory footprint of accessed blocks ((blks_hit + blks_read) * block_size)\n")
-	fmt.Fprintf(w, "# TYPE pg_stat_database_memory_footprint_bytes counter\n")
-	fmt.Fprintf(w, "pg_stat_database_memory_footprint_bytes %d\n", memoryFootprint)
+	fmt.Fprintf(w, "# HELP pg_block_size_bytes Postgres block_size setting, used to convert block counts to bytes\n")
+	fmt.Fprintf(w, "# TYPE pg_block_size_bytes gauge\n")
+	fmt.Fprintf(w, "pg_block_size_bytes %d\n", BlkSizeBytes)
 }
 
 func main() {
