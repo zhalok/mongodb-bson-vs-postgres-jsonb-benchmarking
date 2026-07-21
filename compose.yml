@@ -3,6 +3,12 @@ services:
     image: postgres:16-alpine
     container_name: postgres
     restart: always
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.track_planning=on"
     environment:
       - POSTGRES_PASSWORD=postgres
     ports:
@@ -239,6 +245,22 @@ services:
       mongodb:
         condition: service_healthy
 
+  pg-query-time-exporter:
+    build: ./monitoring/pg-query-time-exporter
+    container_name: pg-query-time-exporter
+    restart: always
+    environment:
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGDATABASE=postgres
+    ports:
+      - 9107:9107
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -256,6 +278,7 @@ services:
       - mongo-hit-read-stats-exporter
       - pg-total-relation-size-exporter
       - mongo-total-size-exporter
+      - pg-query-time-exporter
 
   loki:
     image: grafana/loki:latest

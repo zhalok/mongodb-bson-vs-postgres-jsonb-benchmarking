@@ -29,3 +29,7 @@ scrape_configs:
   - job_name: mongo-total-size-exporter
     static_configs:
       - targets: ["mongo-total-size-exporter:9106"]
+
+  - job_name: pg-query-time-exporter
+    static_configs:
+      - targets: ["pg-query-time-exporter:9107"]
