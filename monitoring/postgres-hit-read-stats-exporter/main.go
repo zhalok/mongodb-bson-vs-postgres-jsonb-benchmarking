@@ -18,6 +18,9 @@ type dbStats struct {
 
 var db *sql.DB
 
+// BlkSizeBytes is the logical page size of postgres.
+var BlkSizeBytes int64
+
 func connect() *sql.DB {
 	dsn := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
@@ -49,6 +52,12 @@ func envOr(key, fallback string) string {
 	return fallback
 }
 
+func fetchBlkSizeBytes(ctx context.Context) (int64, error) {
+	var blockSize int64
+	err := db.QueryRowContext(ctx, `SELECT current_setting('block_size')::bigint`).Scan(&blockSize)
+	return blockSize, err
+}
+
 func collectDBStats(ctx context.Context) (dbStats, error) {
 	var s dbStats
 	err := db.QueryRowContext(ctx, `
@@ -78,11 +87,25 @@ func metricsHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "# HELP pg_stat_database_blks_read_total Disk blocks read for the database\n")
 	fmt.Fprintf(w, "# TYPE pg_stat_database_blks_read_total counter\n")
 	fmt.Fprintf(w, "pg_stat_database_blks_read_total %d\n", stats.BlksRead)
+
+	memoryFootprint := (stats.BlksHit + stats.BlksRead) * BlkSizeBytes
+
+	fmt.Fprintf(w, "# HELP pg_stat_database_memory_footprint_bytes Estimated memory footprint of accessed blocks ((blks_hit + blks_read) * block_size)\n")
+	fmt.Fprintf(w, "# TYPE pg_stat_database_memory_footprint_bytes counter\n")
+	fmt.Fprintf(w, "pg_stat_database_memory_footprint_bytes %d\n", memoryFootprint)
 }
 
 func main() {
 	db = connect()
 	defer db.Close()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	var err error
+	BlkSizeBytes, err = fetchBlkSizeBytes(ctx)
+	if err != nil {
+		panic(err)
+	}
 
 	http.HandleFunc("/metrics", metricsHandler)
 	fmt.Println("postgres-hit-read-stats-exporter listening on :9101")
