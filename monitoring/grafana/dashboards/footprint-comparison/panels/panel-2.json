@@ -8,7 +8,7 @@
           {
             "kind": "PanelQuery",
             "spec": {
-              "hidden": false,
+              "hidden": true,
               "query": {
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
@@ -16,18 +16,20 @@
                 "group": "prometheus",
                 "kind": "DataQuery",
                 "spec": {
+                  "editorMode": "code",
                   "expr": "rate(pg_stat_database_blks_read_total[1m])",
-                  "legendFormat": "postgres disk read (blks_read)"
+                  "legendFormat": "postgres disk read (blks_read)",
+                  "range": true
                 },
                 "version": "v0"
               },
-              "refId": "A"
+              "refId": "pg_pages_disk_read"
             }
           },
           {
             "kind": "PanelQuery",
             "spec": {
-              "hidden": false,
+              "hidden": true,
               "query": {
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
@@ -40,7 +42,45 @@
                 },
                 "version": "v0"
               },
-              "refId": "B"
+              "refId": "mongodb_pages_disk_read"
+            }
+          },
+          {
+            "kind": "PanelQuery",
+            "spec": {
+              "hidden": false,
+              "query": {
+                "datasource": {
+                  "name": "__expr__"
+                },
+                "group": "__expr__",
+                "kind": "DataQuery",
+                "spec": {
+                  "expression": "$pg_pages_disk_read*8",
+                  "type": "math"
+                },
+                "version": "v0"
+              },
+              "refId": "total_pg_bytes_disk_read"
+            }
+          },
+          {
+            "kind": "PanelQuery",
+            "spec": {
+              "hidden": false,
+              "query": {
+                "datasource": {
+                  "name": "__expr__"
+                },
+                "group": "__expr__",
+                "kind": "DataQuery",
+                "spec": {
+                  "expression": "$mongodb_pages_disk_read*4",
+                  "type": "math"
+                },
+                "version": "v0"
+              },
+              "refId": "total_mongo_bytes_disk_read"
             }
           }
         ],
@@ -107,9 +147,37 @@
                   "value": 80
                 }
               ]
-            }
+            },
+            "unit": "bytes"
           },
-          "overrides": []
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "total_pg_bytes_disk_read {instance=\"postgres-hit-read-stats-exporter:9101\", job=\"postgres-hit-read-stats-exporter\"}",
+                "scope": "series"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "total bytes read from disk postgres"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "total_mongo_bytes_disk_read {instance=\"mongo-hit-read-stats-exporter:9104\", job=\"mongo-hit-read-stats-exporter\"}",
+                "scope": "series"
+              },
+              "properties": [
+                {
+                  "id": "displayName",
+                  "value": "total bytes read from disk mongodb"
+                }
+              ]
+            }
+          ]
         },
         "options": {
           "annotations": {

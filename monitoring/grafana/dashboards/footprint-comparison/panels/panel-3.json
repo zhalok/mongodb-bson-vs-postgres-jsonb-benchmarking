@@ -121,7 +121,32 @@
             },
             "unit": "bytes"
           },
-          "overrides": []
+          "overrides": [
+            {
+              "__systemRef": "hideSeriesFrom",
+              "matcher": {
+                "id": "byNames",
+                "options": {
+                  "mode": "exclude",
+                  "names": [
+                    "mongodb memory footprint (total pages requested * page size)"
+                  ],
+                  "prefix": "All except:",
+                  "readOnly": true
+                }
+              },
+              "properties": [
+                {
+                  "id": "custom.hideFrom",
+                  "value": {
+                    "legend": false,
+                    "tooltip": true,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
         },
         "options": {
           "annotations": {
