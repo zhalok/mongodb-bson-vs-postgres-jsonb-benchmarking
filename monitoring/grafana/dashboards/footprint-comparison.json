@@ -5,8 +5,8 @@
     "name": "adfl9tc",
     "namespace": "default",
     "uid": "9d44613d-a90e-411d-89b0-5b4df89b54e4",
-    "resourceVersion": "1784658051340989",
-    "generation": 3,
+    "resourceVersion": "1784659564110012",
+    "generation": 5,
     "creationTimestamp": "2026-07-21T18:19:19Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "3472902168080384"
@@ -15,11 +15,11 @@
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "cgroup-metrics",
-      "grafana.app/sourceChecksum": "c4fc64304b2d617b10a6e3fa6b1ac859",
+      "grafana.app/sourceChecksum": "a72d9ae836d35b4d7002ab7f66b0a472",
       "grafana.app/sourcePath": "/etc/grafana/dashboards/footprint-comparison.json",
-      "grafana.app/sourceTimestamp": "1784654821000",
+      "grafana.app/sourceTimestamp": "1784659539000",
       "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/updatedTimestamp": "2026-07-21T18:20:51Z",
+      "grafana.app/updatedTimestamp": "2026-07-21T18:46:04Z",
       "grafana.app/folder": ""
     }
   },
@@ -178,7 +178,7 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": true,
+                    "hidden": false,
                     "query": {
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
@@ -187,7 +187,7 @@
                       "kind": "DataQuery",
                       "spec": {
                         "editorMode": "code",
-                        "expr": "rate(pg_stat_database_blks_read_total[1m])",
+                        "expr": "sum(rate(pg_stat_database_blks_read_total[1m]))*avg(pg_block_size_bytes)",
                         "legendFormat": "postgres disk read (blks_read)",
                         "range": true
                       },
@@ -199,7 +199,7 @@
                 {
                   "kind": "PanelQuery",
                   "spec": {
-                    "hidden": true,
+                    "hidden": false,
                     "query": {
                       "datasource": {
                         "name": "PBFA97CFB590B2093"
@@ -207,50 +207,14 @@
                       "group": "prometheus",
                       "kind": "DataQuery",
                       "spec": {
-                        "expr": "rate(mongo_wt_cache_read_pages_total[1m])",
-                        "legendFormat": "mongodb disk read (wt cache)"
+                        "editorMode": "code",
+                        "expr": "sum(rate(mongo_wt_cache_read_pages_total[1m]))*avg(mongo_wt_leaf_page_max_bytes)",
+                        "legendFormat": "mongodb disk read (wt cache)",
+                        "range": true
                       },
                       "version": "v0"
                     },
                     "refId": "mongodb_pages_disk_read"
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "hidden": false,
-                    "query": {
-                      "datasource": {
-                        "name": "__expr__"
-                      },
-                      "group": "__expr__",
-                      "kind": "DataQuery",
-                      "spec": {
-                        "expression": "$pg_pages_disk_read*8",
-                        "type": "math"
-                      },
-                      "version": "v0"
-                    },
-                    "refId": "total_pg_bytes_disk_read"
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "hidden": false,
-                    "query": {
-                      "datasource": {
-                        "name": "__expr__"
-                      },
-                      "group": "__expr__",
-                      "kind": "DataQuery",
-                      "spec": {
-                        "expression": "$mongodb_pages_disk_read*4",
-                        "type": "math"
-                      },
-                      "version": "v0"
-                    },
-                    "refId": "total_mongo_bytes_disk_read"
                   }
                 }
               ],
@@ -318,7 +282,7 @@
                       }
                     ]
                   },
-                  "unit": "kbytes"
+                  "unit": "bytes"
                 },
                 "overrides": [
                   {
@@ -344,6 +308,30 @@
                       {
                         "id": "displayName",
                         "value": "total bytes read from disk mongodb"
+                      }
+                    ]
+                  },
+                  {
+                    "__systemRef": "hideSeriesFrom",
+                    "matcher": {
+                      "id": "byNames",
+                      "options": {
+                        "mode": "exclude",
+                        "names": [
+                          "mongodb disk read (wt cache)"
+                        ],
+                        "prefix": "All except:",
+                        "readOnly": true
+                      }
+                    },
+                    "properties": [
+                      {
+                        "id": "custom.hideFrom",
+                        "value": {
+                          "legend": false,
+                          "tooltip": true,
+                          "viz": true
+                        }
                       }
                     ]
                   }
@@ -504,7 +492,7 @@
                       "options": {
                         "mode": "exclude",
                         "names": [
-                          "postgres memory footprint ( (total blk hit + total blk read) * blk size )"
+                          "mongodb memory footprint (total pages requested * page size)"
                         ],
                         "prefix": "All except:",
                         "readOnly": true
@@ -1316,7 +1304,7 @@
                       "options": {
                         "mode": "exclude",
                         "names": [
-                          "pg cache read"
+                          "mongodb cache read"
                         ],
                         "prefix": "All except:",
                         "readOnly": true

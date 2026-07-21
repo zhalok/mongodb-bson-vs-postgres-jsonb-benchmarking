@@ -129,7 +129,7 @@
                 "options": {
                   "mode": "exclude",
                   "names": [
-                    "postgres memory footprint ( (total blk hit + total blk read) * blk size )"
+                    "mongodb memory footprint (total pages requested * page size)"
                   ],
                   "prefix": "All except:",
                   "readOnly": true

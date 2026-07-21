@@ -123,7 +123,7 @@
                 "options": {
                   "mode": "exclude",
                   "names": [
-                    "pg cache read"
+                    "mongodb cache read"
                   ],
                   "prefix": "All except:",
                   "readOnly": true
