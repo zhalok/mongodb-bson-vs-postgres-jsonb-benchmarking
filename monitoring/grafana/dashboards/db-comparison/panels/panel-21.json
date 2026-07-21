@@ -16,14 +16,38 @@
                 "group": "prometheus",
                 "kind": "DataQuery",
                 "spec": {
+                  "editorMode": "code",
                   "expr": "sum(rate(mongo_wt_cache_requested_memory_footprint_bytes{ }[$__rate_interval]))",
                   "fromExploreMetrics": true,
                   "interval": "",
-                  "legendFormat": "sum(rate)"
+                  "legendFormat": "mongodb memory footprint (total pages requested * page size)",
+                  "range": true
                 },
                 "version": "v0"
               },
-              "refId": "mongo_wt_cache_requested_memory_footprint_bytes-sum(rate)"
+              "refId": "mongodb footprint"
+            }
+          },
+          {
+            "kind": "PanelQuery",
+            "spec": {
+              "hidden": false,
+              "query": {
+                "datasource": {
+                  "name": "PBFA97CFB590B2093"
+                },
+                "group": "prometheus",
+                "kind": "DataQuery",
+                "spec": {
+                  "editorMode": "code",
+                  "expr": "sum(rate(pg_stat_database_memory_footprint_bytes{ }[$__rate_interval]))",
+                  "instant": false,
+                  "legendFormat": "postgres memory footprint ( (total blk hit + total blk read) * blk size )",
+                  "range": true
+                },
+                "version": "v0"
+              },
+              "refId": "postgres foot print"
             }
           }
         ],
@@ -42,7 +66,8 @@
         "fieldConfig": {
           "defaults": {
             "color": {
-              "mode": "palette-classic"
+              "mode": "palette-classic",
+              "seriesBy": "max"
             },
             "custom": {
               "axisBorderShow": false,
@@ -51,7 +76,7 @@
               "axisLabel": "",
               "axisPlacement": "auto",
               "barAlignment": 0,
-              "barWidthFactor": 0.6,
+              "barWidthFactor": 0.9,
               "drawStyle": "line",
               "fillOpacity": 0,
               "gradientMode": "none",
@@ -62,12 +87,15 @@
               },
               "insertNulls": false,
               "lineInterpolation": "linear",
+              "lineStyle": {
+                "fill": "solid"
+              },
               "lineWidth": 1,
-              "pointSize": 5,
+              "pointSize": 1,
               "scaleDistribution": {
                 "type": "linear"
               },
-              "showPoints": "auto",
+              "showPoints": "always",
               "showValues": false,
               "spanNulls": false,
               "stacking": {
@@ -90,7 +118,8 @@
                   "value": 80
                 }
               ]
-            }
+            },
+            "unit": "bytes"
           },
           "overrides": []
         },
