@@ -1,6 +1,10 @@
 {
   "kind": "Panel",
   "spec": {
+    "id": 6,
+    "title": "MongoDB Storage Breakdown",
+    "description": "",
+    "links": [],
     "data": {
       "kind": "QueryGroup",
       "spec": {
@@ -8,83 +12,113 @@
           {
             "kind": "PanelQuery",
             "spec": {
-              "hidden": false,
               "query": {
+                "kind": "DataQuery",
+                "group": "prometheus",
+                "version": "v0",
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
                 },
-                "group": "prometheus",
-                "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
                   "expr": "avg(mongo_collection_size_bytes{ })",
                   "legendFormat": "collection size",
                   "range": true
-                },
-                "version": "v0"
+                }
               },
-              "refId": "collection_size"
+              "refId": "collection_size",
+              "hidden": false
             }
           },
           {
             "kind": "PanelQuery",
             "spec": {
-              "hidden": false,
               "query": {
+                "kind": "DataQuery",
+                "group": "prometheus",
+                "version": "v0",
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
                 },
-                "group": "prometheus",
-                "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
                   "expr": "avg(mongo_index_size_bytes{ })",
                   "instant": false,
                   "legendFormat": "index size",
                   "range": true
-                },
-                "version": "v0"
+                }
               },
-              "refId": "index_size"
+              "refId": "index_size",
+              "hidden": false
             }
           },
           {
             "kind": "PanelQuery",
             "spec": {
-              "hidden": false,
               "query": {
+                "kind": "DataQuery",
+                "group": "prometheus",
+                "version": "v0",
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
                 },
-                "group": "prometheus",
-                "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
                   "expr": "avg(mongo_total_size_bytes{ })",
                   "instant": false,
                   "legendFormat": "total size compressed",
                   "range": true
-                },
-                "version": "v0"
+                }
               },
-              "refId": "total_size"
+              "refId": "total_size",
+              "hidden": false
             }
           }
         ],
-        "queryOptions": {},
-        "transformations": []
+        "transformations": [],
+        "queryOptions": {}
       }
     },
-    "description": "",
-    "id": 6,
-    "links": [],
-    "title": "MongoDB Storage Breakdown",
     "vizConfig": {
-      "group": "timeseries",
       "kind": "VizConfig",
+      "group": "timeseries",
+      "version": "13.1.0",
       "spec": {
+        "options": {
+          "annotations": {
+            "clustering": -1,
+            "multiLane": false
+          },
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "enableFacetedFilter": false,
+            "overflow": "ellipsis",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
         "fieldConfig": {
           "defaults": {
+            "unit": "bytes",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "value": 0,
+                  "color": "green"
+                },
+                {
+                  "value": 80,
+                  "color": "red"
+                }
+              ]
+            },
             "color": {
               "mode": "palette-classic"
             },
@@ -121,45 +155,11 @@
               "thresholdsStyle": {
                 "mode": "off"
               }
-            },
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": 0
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "bytes"
+            }
           },
           "overrides": []
-        },
-        "options": {
-          "annotations": {
-            "clustering": -1,
-            "multiLane": false
-          },
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "enableFacetedFilter": false,
-            "overflow": "ellipsis",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
         }
-      },
-      "version": "13.1.0"
+      }
     }
   }
 }

@@ -1,6 +1,10 @@
 {
   "kind": "Panel",
   "spec": {
+    "id": 4,
+    "title": "Postgres vs MongoDB Storage Size",
+    "description": "",
+    "links": [],
     "data": {
       "kind": "QueryGroup",
       "spec": {
@@ -8,61 +12,91 @@
           {
             "kind": "PanelQuery",
             "spec": {
-              "hidden": false,
               "query": {
+                "kind": "DataQuery",
+                "group": "prometheus",
+                "version": "v0",
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
                 },
-                "group": "prometheus",
-                "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
                   "expr": "sum(mongo_total_size_bytes{})",
                   "legendFormat": "mongodb",
                   "range": true
-                },
-                "version": "v0"
+                }
               },
-              "refId": "mongodb"
+              "refId": "mongodb",
+              "hidden": false
             }
           },
           {
             "kind": "PanelQuery",
             "spec": {
-              "hidden": false,
               "query": {
+                "kind": "DataQuery",
+                "group": "prometheus",
+                "version": "v0",
                 "datasource": {
                   "name": "PBFA97CFB590B2093"
                 },
-                "group": "prometheus",
-                "kind": "DataQuery",
                 "spec": {
                   "editorMode": "code",
                   "expr": "sum(pg_total_relation_size_bytes{ })",
                   "instant": false,
                   "legendFormat": "postgres",
                   "range": true
-                },
-                "version": "v0"
+                }
               },
-              "refId": "B"
+              "refId": "B",
+              "hidden": false
             }
           }
         ],
-        "queryOptions": {},
-        "transformations": []
+        "transformations": [],
+        "queryOptions": {}
       }
     },
-    "description": "",
-    "id": 4,
-    "links": [],
-    "title": "Postgres vs MongoDB Storage Size",
     "vizConfig": {
-      "group": "timeseries",
       "kind": "VizConfig",
+      "group": "timeseries",
+      "version": "13.1.0",
       "spec": {
+        "options": {
+          "annotations": {
+            "clustering": -1,
+            "multiLane": false
+          },
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "enableFacetedFilter": false,
+            "overflow": "ellipsis",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          }
+        },
         "fieldConfig": {
           "defaults": {
+            "unit": "bytes",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "value": 0,
+                  "color": "green"
+                },
+                {
+                  "value": 80,
+                  "color": "red"
+                }
+              ]
+            },
             "color": {
               "mode": "palette-classic",
               "seriesBy": "max"
@@ -103,45 +137,11 @@
               "thresholdsStyle": {
                 "mode": "off"
               }
-            },
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": 0
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "bytes"
+            }
           },
           "overrides": []
-        },
-        "options": {
-          "annotations": {
-            "clustering": -1,
-            "multiLane": false
-          },
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "enableFacetedFilter": false,
-            "overflow": "ellipsis",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "hideZeros": false,
-            "mode": "single",
-            "sort": "none"
-          }
         }
-      },
-      "version": "13.1.0"
+      }
     }
   }
 }
