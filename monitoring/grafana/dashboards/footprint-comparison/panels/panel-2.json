@@ -148,7 +148,7 @@
                 }
               ]
             },
-            "unit": "bytes"
+            "unit": "kbytes"
           },
           "overrides": [
             {
