@@ -4,22 +4,22 @@
   "metadata": {
     "name": "adfl9tc",
     "namespace": "default",
-    "uid": "b630182e-1873-4bb3-ba51-54f7caf9fa05",
-    "resourceVersion": "1784643309709020",
-    "generation": 3,
-    "creationTimestamp": "2026-07-21T14:14:38Z",
+    "uid": "3e895a80-839d-40aa-afcf-cac3c7690414",
+    "resourceVersion": "1784646873947020",
+    "generation": 2,
+    "creationTimestamp": "2026-07-21T15:14:33Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "3411322820218880"
+      "grafana.app/deprecatedInternalID": "3426403326644224"
     },
     "annotations": {
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "cgroup-metrics",
-      "grafana.app/sourceChecksum": "4ea224eeaaac568b1e5a6c20054ffc5a",
+      "grafana.app/sourceChecksum": "09e8e7db956688fd6fa8c5ccb1b01440",
       "grafana.app/sourcePath": "/etc/grafana/dashboards/footprint-comparison.json",
-      "grafana.app/sourceTimestamp": "1784642408000",
+      "grafana.app/sourceTimestamp": "1784643444000",
       "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/updatedTimestamp": "2026-07-21T14:15:09Z",
+      "grafana.app/updatedTimestamp": "2026-07-21T15:14:33Z",
       "grafana.app/folder": ""
     }
   },
