@@ -5,8 +5,8 @@
     "name": "db-comparison",
     "namespace": "default",
     "uid": "eea05d1d-3dc1-429c-8b54-c9a12b307403",
-    "resourceVersion": "1784449939974001",
-    "generation": 8,
+    "resourceVersion": "1784635270439006",
+    "generation": 16,
     "creationTimestamp": "2026-07-19T08:14:34Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "2595932716912640"
@@ -15,11 +15,11 @@
       "grafana.app/createdBy": "access-policy:service",
       "grafana.app/managedBy": "classic-file-provisioning",
       "grafana.app/managerId": "cgroup-metrics",
-      "grafana.app/sourceChecksum": "ced8eecdc90352f6c312c3a4842bb12f",
+      "grafana.app/sourceChecksum": "07c8d61fe26752b44af9b71a630ee538",
       "grafana.app/sourcePath": "/etc/grafana/dashboards/db-comparison.json",
-      "grafana.app/sourceTimestamp": "1784449928000",
+      "grafana.app/sourceTimestamp": "1784634666000",
       "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/updatedTimestamp": "2026-07-19T08:32:19Z",
+      "grafana.app/updatedTimestamp": "2026-07-21T12:01:10Z",
       "grafana.app/folder": ""
     }
   },
@@ -264,12 +264,25 @@
             "spec": {
               "element": {
                 "kind": "ElementReference",
-                "name": "mongodb-storage-size"
+                "name": "panel-21"
               },
-              "height": 11,
+              "height": 8,
               "width": 24,
               "x": 0,
               "y": 96
+            }
+          },
+          {
+            "kind": "GridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "mongodb-storage-size"
+              },
+              "height": 9,
+              "width": 24,
+              "x": 0,
+              "y": 104
             }
           }
         ]
